@@ -36,8 +36,13 @@
 }
 
 .landing nav ul li:last-child {
-    background-color: #102c07;
+    background-color: hsl(105, 73%, 10%);
     color: #dff9ce;
+}
+
+.text-link {
+    color: inherit;
+    text-decoration: inherit;
 }
 
 .hero {
@@ -59,11 +64,13 @@
 }
 
 .hero .left-hero h1 {
-    font-size: 2.5em; /* Default size */
+    font-size: 2.5em;
+    /* Default size */
 }
 
 .hero .left-hero p {
-    font-size: 1em; /* Default size */
+    font-size: 1em;
+    /* Default size */
 }
 
 .hero img {
@@ -75,7 +82,9 @@
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-    .hero, .section2 {
+
+    .hero,
+    .section2 {
         flex-direction: column;
         align-items: center;
     }
@@ -88,7 +97,8 @@
         font-size: 0.875em;
     }
 
-    .hero img, .section2 img {
+    .hero img,
+    .section2 img {
         height: auto;
         width: 100%;
         max-width: 300px;
@@ -104,7 +114,8 @@
         font-size: 0.75em;
     }
 
-    .hero img, .section2 img {
+    .hero img,
+    .section2 img {
         height: auto;
         width: 100%;
         max-width: 200px;

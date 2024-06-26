@@ -1,3 +1,4 @@
+import { Container, Row, Col, Image, Stack, Nav, NavLink } from 'react-bootstrap';
 import HeroIllustration from './../assets/Hero-Illustration.svg'
 import AllInone from './../assets/All-in-one.svg';
 import Analytics from './../assets/Analytics.svg';
@@ -14,12 +15,12 @@ function Landing() {
     <div className='landing'>
       <nav className='nav'>
         <h4>Book-In</h4>
-          <ul>
-            <li>Products</li>
-            <li>Resources</li>
-            <li>About</li>
-            <li>Sign In</li>
-          </ul>
+        <ul>
+          <li>Products</li>
+          <li>Resources</li>
+          <li>About</li>
+          <li ><NavLink className='text-link' href='/register'>Sign In</NavLink></li>
+        </ul>
       </nav>
       <div className="hero">
         <div className="left-hero">
@@ -27,7 +28,7 @@ function Landing() {
             Simplify Your Event Bookings with Our All-in-One Solution
           </h1>
           <p className="tagline">
-          Join the 1000+ of users like you that use our services From ticket sales to attendee management, our platform has everything you need for a successful event.
+            Join the 1000+ of users like you that use our services From ticket sales to attendee management, our platform has everything you need for a successful event.
           </p>
           <button>Create An event for Free</button>
         </div>
@@ -43,7 +44,7 @@ function Landing() {
         <div className="comp">
           <img src={Target} alt="" />
           <p>
-          Target a wide audience with a user friendly platform
+            Target a wide audience with a user friendly platform
           </p>
         </div>
         <div className="comp">
@@ -57,16 +58,16 @@ function Landing() {
         <div className="left-sec">
           <h5>Bookings</h5>
           <h2>
-          A fully integrated suite of Event Creation and Customization tools
+            A fully integrated suite of Event Creation and Customization tools
           </h2>
           <p>
-          Design and launch your events with ease using our intuitive tools. Customize every detail to meet your specific needs and create an unforgettable experience for your attendees.
+            Design and launch your events with ease using our intuitive tools. Customize every detail to meet your specific needs and create an unforgettable experience for your attendees.
           </p>
         </div>
         <img src={AllInone} alt="bookings illustration" />
       </div>
       <div className="section2">
-      <img src={Attendees} alt="management illustration" />
+        <img src={Attendees} alt="management illustration" />
         <div className="right-sec">
           <h5>Management</h5>
           <h2>
@@ -81,13 +82,13 @@ function Landing() {
         <div className="right-sec">
           <h5>Monitoring</h5>
           <h2>
-          Insightful Real-time Analytics and Reporting
+            Insightful Real-time Analytics and Reporting
           </h2>
           <p>
-          Gain valuable insights into your event’s performance with our real-time analytics. Track attendee behavior, measure engagement, and make data-driven decisions to enhance future events.
+            Gain valuable insights into your event’s performance with our real-time analytics. Track attendee behavior, measure engagement, and make data-driven decisions to enhance future events.
           </p>
         </div>
-      <img src={Analytics} alt="monitoring illustration" />
+        <img src={Analytics} alt="monitoring illustration" />
       </div>
       <div className="cta-sec">
         <h5>Plan Smarter</h5>
