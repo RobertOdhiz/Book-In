@@ -5,7 +5,8 @@ import Attendees from './../assets/Attendee-Management.svg';
 import Platform from './../assets/Platform.svg';
 import Tickets from './../assets/Tickets.svg';
 import Target from './../assets/Target.svg';
-import '../styles/landing.css'
+import '../styles/landing.css';
+import Footer from './Footer.jsx';
 
 function Landing() {
 
@@ -93,6 +94,7 @@ function Landing() {
         <h1>Ready To Rock Your Next Event Or Appointment?</h1>
         <button>Create Now</button>
       </div>
+      <Footer />
     </div>
   )
 }
