@@ -14,5 +14,9 @@ export default defineConfig({
   server: {
     host: '0.0.0.0', // Listen on all network interfaces
     port: 5173      // Ensure this matches the port in your VirtualBox port forwarding rules
+  },
+  build: {
+    sourcemap: true, // Enable source maps
   }
 })
+
