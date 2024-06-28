@@ -1,0 +1,21 @@
+.date-time-picker {
+    width: 100%;
+}
+
+.react-datepicker__input-container {
+    width: inherit;
+}
+
+.react-datepicker-wrapper {
+    width: 100%;
+}
+
+.react-datepicker__input-container input {
+    display: block;
+    width: 100% !important;
+}
+
+.solid-bottom-border {
+    border-bottom: 2px solid black;
+    /* Example of a solid black bottom border */
+}

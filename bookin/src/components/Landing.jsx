@@ -19,7 +19,8 @@ function Landing() {
           <li>Products</li>
           <li>Resources</li>
           <li>About</li>
-          <li ><NavLink className='text-link' href='/register'>Sign In</NavLink></li>
+          <li ><NavLink className='text-link' href='/login'>Login</NavLink></li>
+          <li ><NavLink className='text-link' href='/register'>Sign Up</NavLink></li>
         </ul>
       </nav>
       <div className="hero">
@@ -30,7 +31,10 @@ function Landing() {
           <p className="tagline">
             Join the 1000+ of users like you that use our services From ticket sales to attendee management, our platform has everything you need for a successful event.
           </p>
-          <button>Create An event for Free</button>
+          <button >
+            <NavLink className='text-link' href='/register-event'>Create An event for Free</NavLink>
+          </button>
+
         </div>
         <img src={HeroIllustration} alt='Hero image' />
       </div>

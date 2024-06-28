@@ -12,8 +12,13 @@ import {
     MDBIcon
 }
     from 'mdb-react-ui-kit';
+import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { googleSignIn } from '../services/googleServices';
+
 
 function Registration() {
+    const supabase = useSupabaseClient();
+
     return (
         <MDBContainer fluid className='p-4 background-radial-gradient overflow-hidden'>
 
@@ -61,7 +66,7 @@ function Registration() {
                                 <MDBCheckbox name='flexCheck' value='' id='flexCheckDefault' label='Subscribe to our newsletter' />
                             </div>
 
-                            <MDBBtn className='w-100 mb-4' size='md'>sign up</MDBBtn>
+                            <MDBBtn className='w-100 mb-4' size='md' onClick={() => googleSignIn(supabase)}>sign up</MDBBtn>
 
                             <div className="text-center">
 
