@@ -5,6 +5,7 @@ import Landing from './components/Landing';
 import AccountLogin from './components/Account_Login';
 import Registration from './components/Account_Registration';
 import EventRegistration from './components/event_registration';
+import EventsList from './components/events_list';
 
 function App() {
 
@@ -15,6 +16,7 @@ function App() {
         <Route path='/register' element={<Registration />} />
         <Route path='/login' element={<AccountLogin />} />
         <Route path='/register-event' element={<EventRegistration />} />
+        <Route path='/events' element={<EventsList />} />
       </Routes>
     </Router>
   )

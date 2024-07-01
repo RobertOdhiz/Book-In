@@ -96,7 +96,7 @@ function EventRegistration() {
                                 <>
                                     <div className=''>
                                         <MDBCardTitle className='pb-2 mb-4 solid-bottom-border'>Create An Account To Get Started !</MDBCardTitle>
-                                        <MDBBtn className='w-100 mb-4' size='md' href='/register' onClick={() => googleSignIn(supabase)}>Sign In</MDBBtn>
+                                        <MDBBtn className='w-100 mb-4' size='md' href='/register' onClick={() => googleSignIn(supabase)}>Get Started</MDBBtn>
                                     </div>
                                 </>
                             }

@@ -31,7 +31,6 @@ export async function createCalendarEvent(session, eventTitle, eventDescription,
         }
     }
 
-    console.log('create calendar event', event);
 
     await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
         method: 'POST',
@@ -43,8 +42,43 @@ export async function createCalendarEvent(session, eventTitle, eventDescription,
         return data.json();
     }).then((data) => {
         alert('Checkout your google calendar for the event');
-        console.log(data);
+        //console.log(data);
+    }).then(() => {
+        getCalendarEvent(session)
     });
+}
+
+export async function getCalendarEvent(session) {
+    try {
+        const response = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + session.provider_token,
+                'Content-Type': 'application/json',
+            }
+        });
+
+        if (!response.ok) {
+            console.error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log(data.items);
+        const events = data.items.map((event) => {
+            const obj = {
+                eventName: event.summary,
+                description: event.description || 'No description available',
+                startTime: event.start.dateTime || event.start.date,
+                endTime: event.end.dateTime || event.end.date,
+                user: session.user.email
+            }
+            return obj;
+        });
+        console.log(events);
+        return events || [];
+    } catch (error) {
+        console.error('Error fetching calendar events:', error);
+    }
 }
 
 const eventEndTime = (dateTimeStr, duration) => {

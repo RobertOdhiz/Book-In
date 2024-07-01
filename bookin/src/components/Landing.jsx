@@ -17,7 +17,7 @@ function Landing() {
         <h4>Book-In</h4>
         <ul>
           <li>Products</li>
-          <li>Resources</li>
+          <li ><NavLink className='text-link' href='/events'>Events</NavLink></li>
           <li>About</li>
           <li ><NavLink className='text-link' href='/login'>Login</NavLink></li>
           <li ><NavLink className='text-link' href='/register'>Sign Up</NavLink></li>
