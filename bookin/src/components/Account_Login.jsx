@@ -1,6 +1,9 @@
 import React, { setState, useState } from 'react';
-
+import axios from 'axios';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 import '../styles/Account_Registration.css';
+import { useSession, useSupabaseClient, useSessionContext } from '@supabase/auth-helpers-react';
 import {
     MDBBtn,
     MDBContainer,
@@ -16,7 +19,35 @@ import {
 
 
 function AccountLogin() {
+    const session = useSession();
+    const supabase = useSupabaseClient();
 
+    console.log('Session in AccountLogin', session);
+    // /*formic forms*/
+    // const formik = useFormik({
+    //     initialValues: {
+    //         email: '',
+    //         password: ''
+    //     },
+    //     onSubmit: values => {
+    //         axios.post('http://localhost:5000/login', {
+    //             email: values.email,
+    //             password: values.password
+    //         }).then(response => {
+    //             console.log(response.data);
+    //         }).catch(error => {
+    //             console.log(error);
+    //         })
+    //     },
+    // })
+
+    // // form validation
+    // validationSchema: Yup.object({
+    //     email: Yup.string()
+    //         .email('Invalid email address')
+    //         .required('email is required'),
+    // })
+    // console.log(formik.errors.email);
 
     return (
         <MDBContainer className='p-4 background-radial-gradient overflow-hidden'>
@@ -24,13 +55,12 @@ function AccountLogin() {
                 <MDBCol md='6' className='text-center text-md-start d-flex flex-column justify-content-center'>
 
                     <h1 className="my-5 display-3 fw-bold ls-tight px-3" style={{ color: 'hsl(218, 81%, 95%)' }}>
-                        Register Event <br />
-                        <span style={{ color: 'hsl(131, 81%, 75%)' }}>For The best Events</span>
+                        Get <br />
+                        <span style={{ color: 'hsl(131, 81%, 75%)' }}>Started</span>
                     </h1>
 
                     <p className='px-3' style={{ color: 'hsl(131, 81%, 85%)' }}>
-                        Ready to bring your event to life and reach a wider audience?
-                        Register now your event now !
+                        Verify your account with google.
                     </p>
 
                 </MDBCol>
@@ -42,23 +72,22 @@ function AccountLogin() {
 
                     <MDBCard className='my-5 bg-glass'>
                         <MDBCardBody className='p-5'>
-                            <form>
-                                <MDBInput className='mb-4' type='email' id='form1Example1' label='Email address' />
-                                <MDBInput className='mb-4' type='password' id='form1Example2' label='Password' />
+                            <MDBInput className='mb-4' type='email' id='email' name='email' label='Email address' />
+                            <MDBInput className='mb-4' type='password' id='password' name='password' label='Password' />
 
-                                <MDBRow className='mb-4'>
-                                    <MDBCol className='d-flex justify-content-center'>
-                                        <MDBCheckbox id='form1Example3' label='Remember me' defaultChecked />
-                                    </MDBCol>
-                                    <MDBCol>
-                                        <a href='#!'>Forgot password?</a>
-                                    </MDBCol>
-                                </MDBRow>
+                            <MDBRow className='mb-4'>
+                                <MDBCol className='d-flex justify-content-center'>
+                                    <MDBCheckbox id='remember' name='remember' label='Remember me' defaultChecked />
+                                </MDBCol>
+                                <MDBCol>
+                                    <a href='#!'>Forgot password?</a>
+                                </MDBCol>
+                            </MDBRow>
 
-                                <MDBBtn type='submit' block>
-                                    Sign in
-                                </MDBBtn>
-                            </form>
+                            <MDBBtn className='w-100 mb-4' type='submit' size='md' href='/register/thank-you' onClick={() => googleSignIn(supabase)} block>
+                                Sign in
+                            </MDBBtn>
+
                         </MDBCardBody>
                     </MDBCard>
 

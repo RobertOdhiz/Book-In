@@ -9,7 +9,8 @@ export async function googleSignIn(supabase) {
         alert('Error while logging in to google provider with supabase');
         console.error(err);
     } else {
-        alert('Account setup successful');
+        alert('Google Auth success');
+        window.location.href = '/register/thank-you';
     };
 }
 
@@ -43,8 +44,8 @@ export async function createCalendarEvent(session, eventTitle, eventDescription,
     }).then((data) => {
         alert('Checkout your google calendar for the event');
         //console.log(data);
-    }).then(() => {
-        getCalendarEvent(session)
+    }).catch((error) => {
+        console.error('Error creating calendar event:', error);
     });
 }
 
@@ -63,8 +64,10 @@ export async function getCalendarEvent(session) {
         }
 
         const data = await response.json();
-        console.log(data.items);
+        // console.log(data.items);
+        // console.log(data);
         const events = data.items.map((event) => {
+            // console.log(Object.keys(event));
             const obj = {
                 eventName: event.summary,
                 description: event.description || 'No description available',
@@ -74,7 +77,6 @@ export async function getCalendarEvent(session) {
             }
             return obj;
         });
-        console.log(events);
         return events || [];
     } catch (error) {
         console.error('Error fetching calendar events:', error);

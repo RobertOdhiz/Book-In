@@ -17,8 +17,10 @@
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@supabase/auth-helpers-react": "^0.5.0",
     "@supabase/supabase-js": "^2.44.0",
+    "axios": "^1.7.2",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
+    "formik": "^2.4.6",
     "mdb-react-ui-kit": "^8.0.0",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.3",
@@ -27,7 +29,8 @@
     "react-dom": "^18.3.1",
     "react-duration-picker": "^1.1.1",
     "react-router-dom": "^6.23.1",
-    "react-time-picker": "^7.0.0"
+    "react-time-picker": "^7.0.0",
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",

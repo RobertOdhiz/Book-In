@@ -32,6 +32,7 @@ function EventRegistration() {
     const [eventDescription, setEventDescription] = useState('');
 
     const session = useSession(); // current active token stored here, when session exists we have a user
+    console.log(session.user.user_metadata);
     const supabase = useSupabaseClient();
     const { isLoading } = useSessionContext(); // prevents a blank screen on load
 

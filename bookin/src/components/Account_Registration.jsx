@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import '../styles/Account_Registration.css';
 import {
     MDBBtn,
@@ -12,12 +12,70 @@ import {
     MDBIcon
 }
     from 'mdb-react-ui-kit';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react';
 import { googleSignIn } from '../services/googleServices';
+import axios from 'axios';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 
 function Registration() {
     const supabase = useSupabaseClient();
+    const session = useSession();
+    console.log('Session in registration', session);
+    /*formic forms*/
+    const formik = useFormik({
+        initialValues: {
+            firstName: '',
+            lastName: '',
+            email: '',
+            password: ''
+        },
+        validationSchema: Yup.object({
+            email: Yup.string().email('Invalid email address').required('Email is required'),
+            password: Yup.string().required('Password is required').min(6, 'Password must be at least 6 characters'),
+        }),
+        onSubmit: async (values) => {
+            try {
+                // Sign in with Google
+                await googleSignIn(supabase);
+
+                // Check if user is signed in
+                if (session) {
+                    const googleId = session.user.user_metadata.sub;
+
+                    // Post user form using axios
+                    const response = await axios.post('http://localhost:5000/register', {
+                        email: values.email,
+                        userName: values.firstName + ' ' + values.lastName,
+                        userId: googleId
+                    });
+
+                    console.log(response.data);
+                } else {
+                    alert('Please login first');
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+            }
+        }
+    });
+
+    // form validation
+    validationSchema: Yup.object({
+        email: Yup.string()
+            .email('Invalid email address')
+            .required('email is required'),
+        password: Yup.string()
+            .required('password is required')
+            .min(6, 'password must be at least 6 characters'),
+        firstName: Yup.string()
+            .required('first name is required'),
+        lastName: Yup.string()
+            .required('last name is required')
+    })
+
+
 
     return (
         <MDBContainer fluid className='p-4 background-radial-gradient overflow-hidden'>
@@ -27,16 +85,14 @@ function Registration() {
                 <MDBCol md='6' className='text-center text-md-start d-flex flex-column justify-content-center'>
 
                     <h1 className="my-5 display-3 fw-bold ls-tight px-3" style={{ color: 'hsl(218, 81%, 95%)' }}>
-                        Register Today <br />
-                        <span style={{ color: 'hsl(131, 81%, 75%)' }}>For The best Events</span>
+                        Register An Account<br />
+                        <span style={{ color: 'hsl(131, 81%, 75%)' }}>To Get Started</span>
                     </h1>
 
                     <p className='px-3' style={{ color: 'hsl(131, 81%, 85%)' }}>
-                        Ready to bring your event to life and reach a wider audience?
-                        Register now as an Event Owner on [Platform Name] and gain access
-                        to powerful tools that make event management effortless.
-                        Whether you’re planning a conference, concert, workshop, or festival,
-                        our platform is designed to help you succeed
+                        Register now as an Event Owner on our platform and gain access
+                        to all of our features.
+
                     </p>
 
                 </MDBCol>
@@ -48,48 +104,49 @@ function Registration() {
 
                     <MDBCard className='my-5 bg-glass'>
                         <MDBCardBody className='p-5'>
+                            <form onSubmit={formik.handleSubmit}>
+                                <MDBRow>
+                                    <MDBCol col='6'>
+                                        <MDBInput wrapperClass='mb-4' label='First name' id='firstName' value={formik.values.firstName} name='firstName' onChange={formik.handleChange} type='text' />
+                                    </MDBCol>
 
-                            <MDBRow>
-                                <MDBCol col='6'>
-                                    <MDBInput wrapperClass='mb-4' label='First name' id='form1' type='text' />
-                                </MDBCol>
+                                    <MDBCol col='6'>
+                                        <MDBInput wrapperClass='mb-4' label='Last name' id='lastName' value={formik.values.lastName} name='lastName' onChange={formik.handleChange} type='text' />
+                                    </MDBCol>
+                                </MDBRow>
 
-                                <MDBCol col='6'>
-                                    <MDBInput wrapperClass='mb-4' label='Last name' id='form2' type='text' />
-                                </MDBCol>
-                            </MDBRow>
+                                <MDBInput className='mb-4' type='email' id='email' name='email' label='Email address' value={formik.values.email} onChange={formik.handleChange} />
+                                <MDBInput className='mb-4' type='password' id='password' name='password' label='Password' value={formik.values.password} onChange={formik.handleChange} />
 
-                            <MDBInput wrapperClass='mb-4' label='Email' id='form3' type='email' />
-                            <MDBInput wrapperClass='mb-4' label='Password' id='form4' type='password' />
+                                <div className='d-flex justify-content-center mb-4'>
+                                    <MDBCheckbox name='flexCheck' value='' id='flexCheckDefault' label='Subscribe to our newsletter' />
+                                </div>
 
-                            <div className='d-flex justify-content-center mb-4'>
-                                <MDBCheckbox name='flexCheck' value='' id='flexCheckDefault' label='Subscribe to our newsletter' />
-                            </div>
+                                <MDBBtn className='w-100 mb-4' href='/register/thank-you' type='submit' size='md' >sign up</MDBBtn>
+                                {/* <MDBBtn className='w-100 mb-4' type='submit' size='md' href='/register/thank-you' onClick={() => googleSignIn(supabase)}>sign up</MDBBtn> */}
 
-                            <MDBBtn className='w-100 mb-4' size='md' onClick={() => googleSignIn(supabase)}>sign up</MDBBtn>
+                                <div className="text-center">
 
-                            <div className="text-center">
+                                    <p>or sign up with:</p>
 
-                                <p>or sign up with:</p>
+                                    <MDBBtn tag='a' color='none' className='mx-3' style={{ color: '#1266f1' }}>
+                                        <MDBIcon fab icon='facebook-f' size="sm" />
+                                    </MDBBtn>
 
-                                <MDBBtn tag='a' color='none' className='mx-3' style={{ color: '#1266f1' }}>
-                                    <MDBIcon fab icon='facebook-f' size="sm" />
-                                </MDBBtn>
+                                    <MDBBtn tag='a' color='none' className='mx-3' style={{ color: '#1266f1' }}>
+                                        <MDBIcon fab icon='twitter' size="sm" />
+                                    </MDBBtn>
 
-                                <MDBBtn tag='a' color='none' className='mx-3' style={{ color: '#1266f1' }}>
-                                    <MDBIcon fab icon='twitter' size="sm" />
-                                </MDBBtn>
+                                    <MDBBtn tag='a' color='none' className='mx-3' style={{ color: '#1266f1' }}>
+                                        <MDBIcon fab icon='google' size="sm" />
+                                    </MDBBtn>
 
-                                <MDBBtn tag='a' color='none' className='mx-3' style={{ color: '#1266f1' }}>
-                                    <MDBIcon fab icon='google' size="sm" />
-                                </MDBBtn>
+                                    <MDBBtn tag='a' color='none' className='mx-3' style={{ color: '#1266f1' }}>
+                                        <MDBIcon fab icon='github' size="sm" />
+                                    </MDBBtn>
 
-                                <MDBBtn tag='a' color='none' className='mx-3' style={{ color: '#1266f1' }}>
-                                    <MDBIcon fab icon='github' size="sm" />
-                                </MDBBtn>
-
-                            </div>
-
+                                </div>
+                            </form>
                         </MDBCardBody>
                     </MDBCard>
 

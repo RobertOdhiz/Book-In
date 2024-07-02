@@ -6,6 +6,7 @@ import AccountLogin from './components/Account_Login';
 import Registration from './components/Account_Registration';
 import EventRegistration from './components/event_registration';
 import EventsList from './components/events_list';
+import ThankYouPage from './components/thank_you_page';
 
 function App() {
 
@@ -17,6 +18,7 @@ function App() {
         <Route path='/login' element={<AccountLogin />} />
         <Route path='/register-event' element={<EventRegistration />} />
         <Route path='/events' element={<EventsList />} />
+        <Route path='/register/thank-you' element={<ThankYouPage />} />
       </Routes>
     </Router>
   )
