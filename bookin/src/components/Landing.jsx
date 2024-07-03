@@ -8,8 +8,13 @@ import Tickets from './../assets/Tickets.svg';
 import Target from './../assets/Target.svg';
 import '../styles/landing.css';
 import Footer from './Footer.jsx';
+import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react';
+import { MDBBtn } from 'mdb-react-ui-kit';
 
 function Landing() {
+
+  const session = useSession();
+
 
   return (
     <div className='landing'>
@@ -17,10 +22,18 @@ function Landing() {
         <h4>Book-In</h4>
         <ul>
           <li>Products</li>
-          <li>Resources</li>
           <li>About</li>
-          <li ><NavLink className='text-link' href='/login'>Login</NavLink></li>
-          <li ><NavLink className='text-link' href='/register'>Sign Up</NavLink></li>
+          <li ><NavLink className='text-link' href='/events'>Events</NavLink></li>
+
+          {session ?
+            <>
+              <li ><NavLink className='text-link' href='/login'>Login</NavLink></li>
+            </>
+            :
+            <>
+              <li ><NavLink className='text-link' href='/login'>Get Started</NavLink></li>
+            </>
+          }
         </ul>
       </nav>
       <div className="hero">
@@ -31,9 +44,9 @@ function Landing() {
           <p className="tagline">
             Join the 1000+ of users like you that use our services From ticket sales to attendee management, our platform has everything you need for a successful event.
           </p>
-          <button >
+          <MDBBtn className='' color='success'  >
             <NavLink className='text-link' href='/register-event'>Create An event for Free</NavLink>
-          </button>
+          </MDBBtn>
 
         </div>
         <img src={HeroIllustration} alt='Hero image' />

@@ -8,7 +8,7 @@
   "scripts": {
     "lint": "./node_modules/.bin/eslint",
     "check-lint": "lint *.js",
-    "start-server": "nodemon --exec babel-node --presets @babel/preset-env ./server.js",
+    "start-server": "nodemon --exec babel-node --presets @babel/preset-env ./src/server.js",
     "dev": "nodemon --exec babel-node --presets @babel/preset-env",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -16,7 +16,10 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@supabase/auth-helpers-react": "^0.5.0",
+    "@supabase/supabase-js": "^2.44.2",
     "bull": "^4.15.0",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "mongodb": "^6.8.0",
@@ -24,6 +27,11 @@
     "util": "^0.12.5"
   },
   "devDependencies": {
+    "@babel/cli": "^7.24.7",
+    "@babel/core": "^7.24.7",
+    "@babel/node": "^7.24.7",
+    "@babel/preset-env": "^7.24.7",
+    "babel-node": "^0.0.1-security",
     "nodemon": "^3.1.4"
   }
 }
