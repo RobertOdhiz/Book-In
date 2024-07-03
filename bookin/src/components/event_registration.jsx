@@ -32,7 +32,6 @@ function EventRegistration() {
     const [eventDescription, setEventDescription] = useState('');
 
     const session = useSession(); // current active token stored here, when session exists we have a user
-    console.log(session.user.user_metadata);
     const supabase = useSupabaseClient();
     const { isLoading } = useSessionContext(); // prevents a blank screen on load
 
@@ -47,13 +46,13 @@ function EventRegistration() {
                 <MDBCol md='6' className='text-center text-md-start d-flex flex-column justify-content-center'>
 
                     <h1 className="my-5 display-3 fw-bold ls-tight px-3" style={{ color: 'hsl(218, 81%, 95%)' }}>
-                        Register Event <br />
+                        Register <br />
                         <span style={{ color: 'hsl(131, 81%, 75%)' }}>For The best Events</span>
                     </h1>
 
                     <p className='px-3' style={{ color: 'hsl(131, 81%, 85%)' }}>
                         Ready to bring your event to life and reach a wider audience?
-                        Register now your event now !
+                        Register your now event now !
                     </p>
 
                 </MDBCol>
@@ -90,14 +89,14 @@ function EventRegistration() {
                                     <MDBInput wrapperClass='mb-4' label='Event Location' id='form2' type='text' onChange={(e) => { setEventLocation(e.target.value) }} />
                                     <MDBInput wrapperClass='mb-4' label='Add Guest' id='form3' type='text' onChange={(e) => { setEventGuest(e.target.value) }} />
                                     <MDBBtn className='w-100 mb-4' size='md'
-                                        onClick={() => { createCalendarEvent(session, eventTitle, eventDescription, eventDateTime, eventDuration); signOut(supabase) }}
+                                        onClick={() => { createCalendarEvent(session, eventTitle, eventDescription, eventDateTime, eventDuration) }}
                                     > Create</MDBBtn>
                                 </>
                                 :
                                 <>
                                     <div className=''>
                                         <MDBCardTitle className='pb-2 mb-4 solid-bottom-border'>Create An Account To Get Started !</MDBCardTitle>
-                                        <MDBBtn className='w-100 mb-4' size='md' href='/register' onClick={() => googleSignIn(supabase)}>Get Started</MDBBtn>
+                                        <MDBBtn className='w-100 mb-4' size='md' href='/login' >Get Started</MDBBtn>
                                     </div>
                                 </>
                             }
