@@ -1,6 +1,5 @@
 import React from 'react';
 import { useSession } from '@supabase/auth-helpers-react';
-import '../styles/Account_Registration.css';
 import {
     MDBBtn,
     MDBContainer,
@@ -18,7 +17,6 @@ import * as Yup from 'yup';
 
 function ThankYouPage() {
     const session = useSession();
-
     const formik = useFormik({
         initialValues: {
             firstName: '',
@@ -31,54 +29,41 @@ function ThankYouPage() {
             organization: Yup.string().required('Organization is required'),
         }),
         onSubmit: (values) => {
-            if (session) {
-                const googleId = session?.user?.user_metadata?.sub;
-                const email = session?.user?.email;
-
-                if (!googleId || !email) {
-                    alert('Please login first');
-                    window.location.href = '/login';
-                    return;
-                }
-
-                console.log('Submitting form with values:', {
-                    email,
-                    userName: `${values.firstName} ${values.lastName}`,
-                    userId: googleId,
-                    organization: values.organization,
-                });
-
-                axios.post('http://localhost:5000/login', {
-                    email,
-                    userName: `${values.firstName} ${values.lastName}`,
-                    userId: googleId,
-                    organization: values.organization,
-                }, {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-                    .then(response => {
-                        console.log('Response:', response.data);
-                        alert('Registration successful');
-                        //window.location.href = '/success'; // redirect to a success page if needed
-                    })
-                    .catch((error) => {
-                        console.error('Axios Error:', error);
-                        alert('Registration failed');
-                    });
-            } else {
+            if (!session?.user?.user_metadata?.sub || !session?.user?.email) {
                 alert('Please login first');
                 window.location.href = '/login';
+                return;
             }
+
+            const { user_metadata: { sub: userId }, email } = session.user;
+            const { firstName, lastName, organization } = values;
+
+            axios.post('http://localhost:5000/login', {
+                email,
+                userName: `${firstName} ${lastName}`,
+                userId,
+                organization,
+            }, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    console.log(response.data);
+                    alert('Registration successful');
+                    window.location.href = '/';
+                })
+                .catch(error => {
+                    console.error(error);
+                    alert('Registration failed');
+                });
         },
     });
 
     return (
         <MDBContainer className='p-4 background-radial-gradient overflow-hidden'>
             <MDBRow>
-                <MDBCol md='3' className='text-center text-md-start d-flex flex-column justify-content-center'></MDBCol>
-                <MDBCol md='6' className='position-relative'>
+                <MDBCol md='6' className='mx-auto position-relative'>
                     <div id="radius-shape-1" className="position-absolute rounded-circle shadow-5-strong"></div>
                     <div id="radius-shape-2" className="position-absolute shadow-5-strong"></div>
                     <MDBCard className='my-5 bg-glass '>
@@ -112,3 +97,4 @@ function ThankYouPage() {
 }
 
 export default ThankYouPage;
+
