@@ -16,9 +16,11 @@ import {
 function AccountLogin() {
     const session = useSession();
     const supabase = useSupabaseClient();
-
-    const handleSignIn = () => {
-        googleSignIn(supabase);
+    console.log(session ? `Session in Account Login : ${session.user.email}` : 'No session');
+    const handleSignIn = async () => {
+        await googleSignIn(supabase).then(() => {
+            window.location.href = '/register/thank-you';
+        })
     };
 
     return (
@@ -51,8 +53,7 @@ function AccountLogin() {
                         ) : (
                             <>
                                 <MDBCardBody className='p-5'>
-                                    <MDBInput className='mb-4' type='email' id='email' name='email' label='Email address' />
-                                    <MDBInput className='mb-4' type='password' id='password' name='password' label='Password' />
+                                    <MDBTypography tag="h2" className='fw-bold mb-4 text-center'>Proceed With Google</MDBTypography>
                                     <MDBRow className='mb-4'>
                                         <MDBCol className='d-flex justify-content-center'>
                                             <MDBCheckbox id='remember' name='remember' label='Remember me' defaultChecked />
