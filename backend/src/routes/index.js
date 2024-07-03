@@ -6,7 +6,9 @@ const router = express.Router();
 
 /* User Registration */
 router.post('/register', UsersController.postUserRegister);
-router.post('/get-me', UsersController.getMe);
+router.get('/users/:id', UsersController.getUser);
+router.get('/users', UsersController.getUsers);
+router.delete('/users/:id', UsersController.deleteUser);
 
 /* Event CRUD */
 router.get('/events', EventsController.getEvents);

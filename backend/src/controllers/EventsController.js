@@ -1,25 +1,27 @@
+const dbClient = require('../utils/db');
+const { ObjectId } = require('mongodb');
 
 class EventsController {
     static async getEvents(req, res) {
-        const eventsCollection = await dbClient.dbEvents();
+        if (!dbClient.isAlive()) {
+            return res.status(500).json({ error: 'Database server not connected' });
+        }
+        const count = await dbClient.db.collection('events').countDocuments();
+        const events = await dbClient.db.collection('events').find({}).toArray();
 
-        const events = await eventsCollection.find().toArray();
-
-        return res.status(200).json({ events });
+        return res.status(200).json({ events, count });
     }
 
     static async getEventById(req, res) {
         const { id } = req.params;
 
-        const eventsCollection = await dbClient.dbEvents();
-
-        const event = await eventsCollection.findOne({ _id: new ObjectId(id) });
+        const event = await dbClient.db.collection('events').findOne({ _id: ObjectId.createFromHexString(id) });
 
         return res.status(200).json({ event });
     }
 
     static async postCreateEvent(req, res) {
-        const { name, date, description, location } = req.body;
+        const { email, name, date, description, location } = req.body;
 
         if (!req.body) {
             return res.status(400).json({ error: 'Invalid input' });
@@ -29,22 +31,26 @@ class EventsController {
             return res.status(500).json({ error: 'Database server not connected' });
         }
 
-
+        const checkUser = await dbClient.db.collection('events').findOne({ name });
+        if (checkUser) {
+            return res.status(409).json({ error: 'Event already exists' });
+        }
         const event = {
+            email,
             name,
             date,
             description,
             location
         };
 
-        const result = await dbClient.dbEvents().insertOne(event);
+        const result = await dbClient.db.collection('events').insertOne(event);
 
-        return res.status(201).json({ name, date, description, location, id: result.insertedId });
+        return res.status(201).json({ email, name, date, description, location, id: result.insertedId });
     }
 
     static async updateEventById(req, res) {
         const { id } = req.params;
-        const { name, date, description, location } = req.body;
+        const { email, name, date, description, location } = req.body;
 
         if (!req.body) {
             return res.status(400).json({ error: 'Invalid input' });
@@ -54,14 +60,14 @@ class EventsController {
             return res.status(500).json({ error: 'Database server not connected' });
         }
 
-        const event = await dbClient.dbEvents().findOne({ _id: new ObjectId(id) });
+        const event = await dbClient.db.collection('events').findOne({ _id: ObjectId.createFromHexString(id) });
 
         if (!event) {
             return res.status(404).json({ error: 'Event not found' });
         }
 
-        const result = await eventsCollection.updateOne(
-            { _id: new ObjectId(id) },
+        const result = await dbClient.db.collection('events').updateOne(
+            { _id: ObjectId.createFromHexString(id) },
             { $set: { name, date, description, location } }
         );
 
@@ -75,15 +81,13 @@ class EventsController {
             return res.status(500).json({ error: 'Database server not connected' });
         }
 
-        const eventsCollection = await dbClient.dbEvents();
-
-        const event = await eventsCollection.findOne({ _id: new ObjectId(id) });
+        const event = await dbClient.db.collection('events').findOne({ _id: ObjectId.createFromHexString(id) });
 
         if (!event) {
             return res.status(404).json({ error: 'Event not found' });
         }
 
-        const result = await eventsCollection.deleteOne({ _id: new ObjectId(id) });
+        const result = await dbClient.db.collection('events').deleteOne({ _id: ObjectId.createFromHexString(id) });
 
         return res.status(200).json({ message: 'Event deleted' });
     }

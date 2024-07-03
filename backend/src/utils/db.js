@@ -3,32 +3,28 @@ const { MongoClient } = require('mongodb');
 
 class DBClient {
     constructor() {
-        const host = process.env.DB_HOST;
-        const port = process.env.DB_PORT;
-        const url = `mongodb://${host}:${port}`;
-        const database = process.env.DB_DATABASE;
-        this.client = new MongoClient(url, { useUnifiedTopology: true });
+        const { DB_HOST, DB_PORT, DB_DATABASE } = process.env;
+        const url = `mongodb://${DB_HOST}:${DB_PORT}`;
+
+        this.client = new MongoClient(url);
 
         this.client.connect()
             .then(() => {
-                console.log('Connected to MongoDB client');
-                this.client_db = this.client.db(database);
+                this.db = this.client.db(DB_DATABASE)
+                console.log('Connection to MongoDB established');
             })
-            .catch((err) => {
-                console.error(`Connection to MongoDB failed with Error: ${err}`);
-            });
+            .catch(console.log('Error connecting to MongoDB:'));
     }
-
     isAlive() {
         return this.client && this.client.topology && this.client.topology.isConnected();
     }
 
     async dbUsers() {
-        return this.client_db.collection('users');
+        return this.db.collection('users');
     }
 
     async dbEvents() {
-        return this.client_db.collection('events');
+        return this.db.collection('events');
     }
 }
 

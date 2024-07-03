@@ -5,10 +5,12 @@ export async function googleSignIn(supabase) {
             options: {
                 scopes: 'https://www.googleapis.com/auth/calendar',
             },
-        });
-        window.location.href = '/register/thank-you';
+        }).then((response) => {
+            alert('Login successful');
+        }).catch((error) => {
+            alert('Error while logging in to Google provider with Supabase');
+        })
     } catch (error) {
-        console.error('Error while logging in to Google provider with Supabase:', error);
         alert('Error while logging in to Google provider with Supabase');
     }
 }
