@@ -17,10 +17,22 @@ function AccountLogin() {
     const session = useSession();
     const supabase = useSupabaseClient();
     console.log(session ? `Session in Account Login : ${session.user.email}` : 'No session');
+
     const handleSignIn = async () => {
+        const { data, error } = await supabase.auth.refreshSession();
+        const { session, user } = data;
+        console.log(session, user);
         await googleSignIn(supabase).then(() => {
-            window.location.href = '/register/thank-you';
-        })
+            alert('Signed in');
+            //window.location.href = '/register/thank-you';
+        });
+    };
+
+    const handleSignOut = async () => {
+        await signOut(supabase).then(() => {
+            alert('Signed out');
+            //window.location.href = '/';
+        });
     };
 
     return (
@@ -32,7 +44,7 @@ function AccountLogin() {
                         <span style={{ color: 'hsl(131, 81%, 75%)' }}>Started</span>
                     </h1>
                     <p className='px-3' style={{ color: 'hsl(131, 81%, 85%)' }}>
-                        Verify your account with google.
+                        Verify your account with Google.
                     </p>
                 </MDBCol>
                 <MDBCol md='6' className='position-relative'>
@@ -42,11 +54,11 @@ function AccountLogin() {
                         {session ? (
                             <>
                                 <MDBTypography tag="h2" className='fw-bold mb-4 text-center'>Welcome Back!</MDBTypography>
-                                <MDBTypography tag="h5" className=' mb-3 text-center'>Are you sure you want to sign out.</MDBTypography>
-                                <MDBBtn color='success' className='w-100 mb-4' type='submit' size='md' href='/register/thank-you' block>
+                                <MDBTypography tag="h5" className=' mb-3 text-center'>Are you sure you want to sign out?</MDBTypography>
+                                <MDBBtn color='success' className='w-100 mb-4' size='md' href='/register/thank-you' block>
                                     Proceed To Events
                                 </MDBBtn>
-                                <MDBBtn color='bg-secondary shadow-1-strong' className='w-100 mb-4' type='submit' size='md' href='/' onClick={() => signOut(supabase)} block>
+                                <MDBBtn color='bg-secondary shadow-1-strong' className='w-100 mb-4' size='md' onClick={handleSignOut} block>
                                     Sign Out
                                 </MDBBtn>
                             </>
@@ -62,8 +74,8 @@ function AccountLogin() {
                                             <a href='#!'>Forgot password?</a>
                                         </MDBCol>
                                     </MDBRow>
-                                    <MDBBtn className='w-100 mb-4' type='submit' size='md' onClick={handleSignIn} block>
-                                        Sign in
+                                    <MDBBtn className='w-100 mb-4' size='md' onClick={handleSignIn} block>
+                                        Sign In
                                     </MDBBtn>
                                 </MDBCardBody>
                             </>

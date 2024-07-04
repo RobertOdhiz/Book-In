@@ -32,9 +32,9 @@ function ThankYouPage() {
         }),
         onSubmit: async (values) => {
             if (!session?.user?.user_metadata?.sub || !session?.user?.email) {
-                alert('Please Set up your account first');
+                console.log('Please set up your account first');
                 window.location.href = '/login';
-                return <></>;
+                return;
             }
 
             const { user_metadata: { sub: userId }, email } = session.user;
@@ -44,23 +44,33 @@ function ThankYouPage() {
                 userName: `${firstName} ${lastName}`,
                 userId: userId || '',
                 organization: organization,
-            }
-            console.log(userData);
-
-            await axios.post('http://127.0.0.1:5000/register', userData,
-                {
-                    headers: {
-                        'Content-Type': 'application/json'
+            };
+            axios.get(`http://127.0.0.1:5000/users/${userId}`)
+                .then((response) => {
+                    if (response.status === 200) {
+                        alert('User already exists');
+                        window.location.href = '/';
                     }
-                }).then((response) => {
-                    console.log(response.data);
-                    alert('Registration successful');
-                    window.location.href = '/';
-                }).catch((error) => {
-                    console.error('Registration error:', error.name);
-                    alert('Registration failed');
+                })
+                .catch((error) => {
+                    if (error.response.status === 404) {
+                        return handlePost();
+                    } else {
+                        console.error('Registration error:', error.message);
+                        console.log('Registration failed');
+                    }
                 });
-        },
+            const handlePost = async () => {
+                axios.post('http://127.0.0.1:5000/register', userData)
+                    .then((response2) => {
+                        if (response2.status === 201) {
+                            alert('User created');
+                            console.log('Registration successful');
+                            window.location.href = '/';
+                        }
+                    })
+            }
+        }
     });
 
     return (
@@ -100,4 +110,3 @@ function ThankYouPage() {
 }
 
 export default ThankYouPage;
-

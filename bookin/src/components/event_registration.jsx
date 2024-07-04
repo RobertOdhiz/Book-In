@@ -1,5 +1,6 @@
 import React, { setState, useState } from 'react';
 import { useSession, useSupabaseClient, useSessionContext } from '@supabase/auth-helpers-react';
+import axios from 'axios';
 
 import '../styles/Account_Registration.css';
 import {
@@ -34,11 +35,51 @@ function EventRegistration() {
     const session = useSession(); // current active token stored here, when session exists we have a user
     const supabase = useSupabaseClient();
     const { isLoading } = useSessionContext(); // prevents a blank screen on load
+    console.log(session ? `Session in Event Registration ${session.user.email}` : 'No session');
 
     if (isLoading) { return <></> };
 
     const [hr, min] = eventDuration.split(':');
     const eventLabel = `This event will take place on ${eventDateTime.toDateString()} at ${eventDateTime.toLocaleTimeString()} for duration ${hr}h ${min}m`;
+
+    const handleSubmit = async (event) => {
+        //event.preventDefault();
+        try {
+            const data = await createCalendarEvent(session, eventTitle, eventDescription, eventDateTime, eventDuration)
+
+            if (data) {
+                alert(`Event created successfully with id: ${data.id}`);
+                const eventData = {
+                    eventId: data.id,
+                    email: session.user.email,
+                    title: eventTitle,
+                    userId: session.user.user_metadata.sub,
+                    startTime: data.start.dateTime,
+                    timeZone: data.start.timeZone,
+                    endTime: data.end.dateTime,
+                    status: data.status,
+                    description: eventDescription,
+                    location: eventLocation,
+                    attendees: eventGuest
+                };
+                const handlePost = async () => {
+                    axios.post('http://127.0.0.1:5000/events', eventData)
+                        .then((response2) => {
+                            if (response2.status === 201) {
+                                alert('Event created');
+                                window.location.href = `/events/${data.id}`;
+                            }
+                        })
+                }
+                handlePost();
+            } else {
+                console.log('Event creation failed', data);
+            }
+        } catch (error) {
+            console.error('Event creation error:', error);
+            alert('Event creation failed');
+        }
+    };
 
     return (
         <MDBContainer className='p-4 background-radial-gradient overflow-hidden'>
@@ -87,9 +128,9 @@ function EventRegistration() {
                                         <MDBCheckbox name='flexCheck' value='' id='flexCheckDefault' label={eventLabel} />
                                     </div>
                                     <MDBInput wrapperClass='mb-4' label='Event Location' id='form2' type='text' onChange={(e) => { setEventLocation(e.target.value) }} />
-                                    <MDBInput wrapperClass='mb-4' label='Add Guest' id='form3' type='text' onChange={(e) => { setEventGuest(e.target.value) }} />
+                                    <MDBInput wrapperClass='mb-4' label='Add Guest Email' id='form3' type='text' onChange={(e) => { setEventGuest(e.target.value) }} />
                                     <MDBBtn className='w-100 mb-4' size='md'
-                                        onClick={() => { createCalendarEvent(session, eventTitle, eventDescription, eventDateTime, eventDuration) }}
+                                        onClick={handleSubmit}
                                     > Create</MDBBtn>
                                 </>
                                 :
