@@ -4,7 +4,6 @@ const { ObjectId } = require('mongodb');
 class UsersController {
     static async postUserRegister(req, res) {
         const { email, userName, userId, organization } = req.body;
-
         if (!req.body) {
             return res.status(400).json({ error: 'Invalid input' });
         }
@@ -34,16 +33,18 @@ class UsersController {
 
     static async getUser(req, res) {
         const { id } = req.params;
+        const userId = id;
 
-        if (!id) {
+        if (!userId) {
             return res.status(401).json({ error: 'Unauthorized' });
         }
 
-        const user = await dbClient.db.collection('users').findOne({ _id: ObjectId.createFromHexString(id) });
+        const user = await dbClient.db.collection('users').findOne({ userId });
 
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
+        console.log(user);
         return res.status(200).json({ user });
     }
 
@@ -67,6 +68,23 @@ class UsersController {
         }
         await dbClient.db.collection('users').deleteOne({ _id: ObjectId.createFromHexString(id) });
         return res.status(200).json({ message: 'User deleted' });
+    }
+
+    static async deleteUsersByUserId(req, res) {
+        const { userId } = req.params;
+
+        if (!dbClient.isAlive()) {
+            return res.status(500).json({ error: 'Database server not connected' });
+        }
+
+        const users = await dbClient.db.collection('users').find({ userId }).toArray();
+        if (users.length === 0) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        await dbClient.db.collection('users').deleteMany({ userId });
+
+        return res.status(200).json({ message: `Deleted ${users.length} user(s) with userId: ${userId}` });
     }
 }
 module.exports = UsersController;

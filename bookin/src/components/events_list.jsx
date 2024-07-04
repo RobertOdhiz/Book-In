@@ -24,6 +24,7 @@ function EventsList() {
             const fetchEvents = async () => {
                 const eventsData = await getCalendarEvent(session);
                 setEvents(eventsData);
+                eventsData.forEach((event) => console.log(event));
             };
 
             fetchEvents();
@@ -53,6 +54,15 @@ function EventsList() {
                                                 <div>
                                                     <h5 className='fw-bold' style={{ color: 'GrayText' }}>{event.eventName}</h5>
                                                     <p>{event.description}</p>
+                                                    <p>{event.url}</p>
+                                                    <p>event id: {event.id}</p>
+                                                    <p>{event.summary}</p>
+                                                    <p>{event.location}</p>
+                                                    <p>{event.organizer}</p>
+                                                    <p>{event.organizerEmail}</p>
+                                                    <p>{event.organizerPhone}</p>
+                                                    <p>{event.organizerWebsite}</p>
+                                                    <p>{event.organizerTitle}</p>
                                                 </div>
                                             </MDBCol>
                                         </MDBRow>
