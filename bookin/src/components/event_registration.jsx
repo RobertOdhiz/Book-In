@@ -1,4 +1,4 @@
-import React, { setState, useState } from 'react';
+import React, { useState } from 'react';
 import { useSession, useSupabaseClient, useSessionContext } from '@supabase/auth-helpers-react';
 import axios from 'axios';
 
@@ -43,25 +43,35 @@ function EventRegistration() {
     const eventLabel = `This event will take place on ${eventDateTime.toDateString()} at ${eventDateTime.toLocaleTimeString()} for duration ${hr}h ${min}m`;
 
     const handleSubmit = async (event) => {
-        //event.preventDefault();
+        event.preventDefault();
         try {
-            const data = await createCalendarEvent(session, eventTitle, eventDescription, eventDateTime, eventDuration)
+            const data = await createCalendarEvent(session, eventTitle, eventDescription, eventDateTime, eventDuration);
 
             if (data) {
                 alert(`Event created successfully with id: ${data.id}`);
+
+                const startDateTime = data.start ? data.start.dateTime : null;
+                const startTimeZone = data.start ? data.start.timeZone : null;
+                const endDateTime = data.end ? data.end.dateTime : null;
+
+                if (!startDateTime || !endDateTime) {
+                    throw new Error('Event start or end time is missing');
+                }
+
                 const eventData = {
                     eventId: data.id,
                     email: session.user.email,
                     title: eventTitle,
                     userId: session.user.user_metadata.sub,
-                    startTime: data.start.dateTime,
-                    timeZone: data.start.timeZone,
-                    endTime: data.end.dateTime,
+                    startTime: startDateTime,
+                    timeZone: startTimeZone,
+                    endTime: endDateTime,
                     status: data.status,
                     description: eventDescription,
                     location: eventLocation,
                     attendees: eventGuest
                 };
+
                 const handlePost = async () => {
                     axios.post('http://127.0.0.1:5000/events', eventData)
                         .then((response2) => {
@@ -70,7 +80,11 @@ function EventRegistration() {
                                 window.location.href = `/events/${data.id}`;
                             }
                         })
-                }
+                        .catch((error) => {
+                            console.error('Error posting event:', error);
+                            alert('Event creation failed');
+                        });
+                };
                 handlePost();
             } else {
                 console.log('Event creation failed', data);
@@ -82,8 +96,8 @@ function EventRegistration() {
     };
 
     return (
-        <MDBContainer className='p-4 background-radial-gradient overflow-hidden'>
-            <MDBRow>
+        <MDBContainer fluid className='p-4 background-radial-gradient overflow-hidden'>
+            <MDBRow className='justify-content-center'>
                 <MDBCol md='6' className='text-center text-md-start d-flex flex-column justify-content-center'>
 
                     <h1 className="my-5 display-3 fw-bold ls-tight px-3" style={{ color: 'hsl(218, 81%, 95%)' }}>
@@ -93,7 +107,7 @@ function EventRegistration() {
 
                     <p className='px-3' style={{ color: 'hsl(131, 81%, 85%)' }}>
                         Ready to bring your event to life and reach a wider audience?
-                        Register your now event now !
+                        Register your event now!
                     </p>
 
                 </MDBCol>
@@ -107,7 +121,7 @@ function EventRegistration() {
                         <MDBCardBody className='p-5'>
                             {session ?
                                 <>
-                                    <h4>Welcome {session.user.email} !</h4>
+                                    <h4>Welcome {session.user.email}!</h4>
 
                                     <MDBCardTitle className='pb-2 mb-4 solid-bottom-border'>Create Event</MDBCardTitle>
                                     <MDBInput wrapperClass='mb-4' label='Event title' id='form1' type='text' onChange={(e) => { setEventTitle(e.target.value) }} />
@@ -118,7 +132,7 @@ function EventRegistration() {
                                             <DateTimePicker onChange={setEventDateTime} value={eventDateTime} />
                                         </MDBCol>
 
-                                        <MDBCol >
+                                        <MDBCol>
                                             <label htmlFor='duration-picker'>Duration</label>
                                             <br />
                                             <MDBInput style={{ height: '30px' }} wrapperClass='mb-4' label='' id='form2' type='time' onChange={(e) => { setEventDuration(e.target.value) }} />
@@ -135,9 +149,9 @@ function EventRegistration() {
                                 </>
                                 :
                                 <>
-                                    <div className=''>
-                                        <MDBCardTitle className='pb-2 mb-4 solid-bottom-border'>Create An Account To Get Started !</MDBCardTitle>
-                                        <MDBBtn className='w-100 mb-4' size='md' href='/login' >Get Started</MDBBtn>
+                                    <div>
+                                        <MDBCardTitle className='pb-2 mb-4 solid-bottom-border'>Create An Account To Get Started!</MDBCardTitle>
+                                        <MDBBtn className='w-100 mb-4' size='md' href='/login'>Get Started</MDBBtn>
                                     </div>
                                 </>
                             }
@@ -147,8 +161,8 @@ function EventRegistration() {
                 </MDBCol>
 
             </MDBRow>
-        </MDBContainer >
-    )
+        </MDBContainer>
+    );
 }
 
 export default EventRegistration;

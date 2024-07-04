@@ -74,38 +74,43 @@ function ThankYouPage() {
     });
 
     return (
-        <MDBContainer className='p-4 background-radial-gradient overflow-hidden'>
-            <MDBRow>
-                <MDBCol md='6' className='mx-auto position-relative'>
-                    <div id="radius-shape-1" className="position-absolute rounded-circle shadow-5-strong"></div>
-                    <div id="radius-shape-2" className="position-absolute shadow-5-strong"></div>
-                    <MDBCard className='my-5 bg-glass '>
-                        <MDBCardBody className='p-5 '>
-                            <MDBTypography tag="h2" className='fw-bold mb-4 text-center'>Thanks for signing up!</MDBTypography>
-                            <MDBTypography tag="h5" className=' mb-3 text-center'>Fill in the form to proceed.</MDBTypography>
-                            <form onSubmit={formik.handleSubmit}>
-                                <MDBRow>
-                                    <MDBCol col='6'>
-                                        <MDBInput wrapperClass='mb-4' label='First name' id='firstName' value={formik.values.firstName} name='firstName' onChange={formik.handleChange} type='text' />
-                                    </MDBCol>
+        <div className='background-radial-gradient d-flex align-items-center justify-content-center' style={{ minHeight: '100vh' }}>
+            <MDBContainer className='w-100'>
+                <MDBRow className='justify-content-center'>
+                    <MDBCol md='6' className='position-relative'>
 
-                                    <MDBCol col='6'>
-                                        <MDBInput wrapperClass='mb-4' label='Last name' id='lastName' value={formik.values.lastName} name='lastName' onChange={formik.handleChange} type='text' />
-                                    </MDBCol>
-                                </MDBRow>
-                                <MDBInput wrapperClass='mb-4' label='Organization' id='organization' value={formik.values.organization} name='organization' onChange={formik.handleChange} type='text' />
-                                <div className='d-flex justify-content-center mb-4'>
-                                    <MDBCheckbox name='flexCheck' value='' id='flexCheckDefault' label='Subscribe to our newsletter' />
-                                </div>
+                        <div id="radius-shape-1" className="position-absolute rounded-circle shadow-5-strong"></div>
+                        <div id="radius-shape-2" className="position-absolute shadow-5-strong"></div>
 
-                                <MDBBtn className='w-100 mb-4' type='submit' size='md'>Submit</MDBBtn>
+                        <MDBCard className='my-5 bg-glass'>
+                            <MDBCardBody className='p-5'>
+                                <MDBTypography tag="h2" className='fw-bold mb-4 text-center'>Thanks for signing up!</MDBTypography>
+                                <MDBTypography tag="h5" className='mb-3 text-center'>Fill in the form to proceed.</MDBTypography>
+                                <form onSubmit={formik.handleSubmit}>
+                                    <MDBRow>
+                                        <MDBCol col='6'>
+                                            <MDBInput wrapperClass='mb-4' label='First name' id='firstName' value={formik.values.firstName} name='firstName' onChange={formik.handleChange} type='text' />
+                                        </MDBCol>
 
-                            </form>
-                        </MDBCardBody>
-                    </MDBCard>
-                </MDBCol>
-            </MDBRow>
-        </MDBContainer>
+                                        <MDBCol col='6'>
+                                            <MDBInput wrapperClass='mb-4' label='Last name' id='lastName' value={formik.values.lastName} name='lastName' onChange={formik.handleChange} type='text' />
+                                        </MDBCol>
+                                    </MDBRow>
+                                    <MDBInput wrapperClass='mb-4' label='Organization' id='organization' value={formik.values.organization} name='organization' onChange={formik.handleChange} type='text' />
+                                    <div className='d-flex justify-content-center mb-4'>
+                                        <MDBCheckbox name='flexCheck' value='' id='flexCheckDefault' label='Subscribe to our newsletter' />
+                                    </div>
+
+                                    <MDBBtn className='w-100 mb-4' type='submit' size='md'>Submit</MDBBtn>
+
+                                </form>
+                            </MDBCardBody>
+                        </MDBCard>
+
+                    </MDBCol>
+                </MDBRow>
+            </MDBContainer>
+        </div>
     );
 }
 
