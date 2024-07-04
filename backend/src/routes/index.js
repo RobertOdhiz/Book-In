@@ -9,12 +9,15 @@ router.post('/register', UsersController.postUserRegister);
 router.get('/users/:id', UsersController.getUser);
 router.get('/users', UsersController.getUsers);
 router.delete('/users/:id', UsersController.deleteUser);
+router.delete('/users/clear/:userId', UsersController.deleteUsersByUserId);
 
 /* Event CRUD */
 router.get('/events', EventsController.getEvents);
 router.get('/events/:id', EventsController.getEventById);
+router.get('/user/events/:userId', EventsController.getEventsByUserId);
 router.post('/events', EventsController.postCreateEvent);
-router.put('/events/:id', EventsController.updateEventById);
+router.put('/events/:eventId', EventsController.updateEventById);
+router.put('/events/:id/attendees', EventsController.appendAttendee);
 router.delete('/events/:id', EventsController.deleteEventById);
 
 module.exports = router;
