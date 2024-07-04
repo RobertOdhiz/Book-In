@@ -4,6 +4,7 @@ const { ObjectId } = require('mongodb');
 class EventsController {
     static async getEvents(req, res) {
         if (!dbClient.isAlive()) {
+            console.log('DB not running');
             return res.status(500).json({ error: 'Database server not connected' });
         }
         const count = await dbClient.db.collection('events').countDocuments();
@@ -14,14 +15,13 @@ class EventsController {
 
     static async getEventById(req, res) {
         const { id } = req.params;
-
-        const event = await dbClient.db.collection('events').findOne({ _id: ObjectId.createFromHexString(id) });
-
+        const eventId = id;
+        const event = await dbClient.db.collection('events').findOne({ eventId });
         return res.status(200).json({ event });
     }
 
     static async postCreateEvent(req, res) {
-        const { email, name, date, description, location } = req.body;
+        const { email, attendees, eventId, title, userId, startTime, timeZone, endTime, description, location, status } = req.body;
 
         if (!req.body) {
             return res.status(400).json({ error: 'Invalid input' });
@@ -31,26 +31,45 @@ class EventsController {
             return res.status(500).json({ error: 'Database server not connected' });
         }
 
-        const checkUser = await dbClient.db.collection('events').findOne({ name });
-        if (checkUser) {
+        const checkEvent = await dbClient.db.collection('events').findOne({ eventId });
+        if (checkEvent) {
             return res.status(409).json({ error: 'Event already exists' });
         }
         const event = {
             email,
-            name,
-            date,
+            attendees,
+            eventId,
+            userId,
+            title,
+            startTime,
+            timeZone,
+            endTime,
             description,
-            location
+            location,
+            status
         };
 
         const result = await dbClient.db.collection('events').insertOne(event);
 
-        return res.status(201).json({ email, name, date, description, location, id: result.insertedId });
+        return res.status(201).json({ message: 'Event created successfully', id: result.insertedId });
     }
 
     static async updateEventById(req, res) {
-        const { id } = req.params;
-        const { email, name, date, description, location } = req.body;
+        let { eventId } = req.params;
+        const {
+            email,
+            attendees,
+            _id,
+            title,
+            userId,
+            startTime,
+            timeZone,
+            endTime,
+            description,
+            location,
+            status,
+            qrCodeDataURL
+        } = req.body;
 
         if (!req.body) {
             return res.status(400).json({ error: 'Invalid input' });
@@ -60,19 +79,40 @@ class EventsController {
             return res.status(500).json({ error: 'Database server not connected' });
         }
 
-        const event = await dbClient.db.collection('events').findOne({ _id: ObjectId.createFromHexString(id) });
+        const event = await dbClient.db.collection('events').findOne({ _id: ObjectId.createFromHexString(_id) });
 
         if (!event) {
             return res.status(404).json({ error: 'Event not found' });
         }
 
-        const result = await dbClient.db.collection('events').updateOne(
+        const qrCodeBuffer = qrCodeDataURL ? Buffer.from(qrCodeDataURL.split(',')[1], 'base64') : null; // Convert Data URL to Buffer
+
+        const updateData = {
+            email,
+            attendees,
+            eventId,
+            userId,
+            title,
+            startTime,
+            timeZone,
+            endTime,
+            description,
+            location,
+            status,
+            qrCode: qrCodeBuffer // Add QR Code Buffer to the update data
+        };
+
+        await dbClient.db.collection('events').updateOne(
             { _id: ObjectId.createFromHexString(id) },
-            { $set: { name, date, description, location } }
+            { $set: updateData }
         );
 
-        return res.status(200).json({ name, date, description, location, id });
+        return res.status(200).json({
+            ...updateData,
+            id
+        });
     }
+
 
     static async deleteEventById(req, res) {
         const { id } = req.params;
@@ -87,9 +127,65 @@ class EventsController {
             return res.status(404).json({ error: 'Event not found' });
         }
 
-        const result = await dbClient.db.collection('events').deleteOne({ _id: ObjectId.createFromHexString(id) });
+        await dbClient.db.collection('events').deleteOne({ _id: ObjectId.createFromHexString(id) });
 
         return res.status(200).json({ message: 'Event deleted' });
+    }
+
+    static async getEventsByUserId(req, res) {
+        const { userId } = req.params;
+
+        if (!userId) {
+            return res.status(400).json({ error: 'User ID is required' });
+        }
+
+        if (!dbClient.isAlive()) {
+            return res.status(500).json({ error: 'Database server not connected' });
+        }
+
+        try {
+            const events = await dbClient.db.collection('events').find({ userId: userId }).toArray();
+
+            if (events.length === 0) {
+                return res.status(404).json({ error: 'No events found for this user' });
+            }
+
+            return res.status(200).json({ events });
+        } catch (error) {
+            console.error('Error fetching events:', error);
+            return res.status(500).json({ error: 'An error occurred while fetching events' });
+        }
+    }
+
+    static async appendAttendee(req, res) {
+        const { id } = req.params;
+        const { formData } = req.body;
+
+        if (!formData) {
+            return res.status(400).json({ error: 'Invalid input' });
+        }
+
+        if (!dbClient.isAlive()) {
+            return res.status(500).json({ error: 'Database server not connected' });
+        }
+
+        const event = await dbClient.db.collection('events').findOne({ _id: ObjectId.createFromHexString(id) });
+
+        if (!event) {
+            return res.status(404).json({ error: 'Event not found' });
+        }
+
+        const updatedAttendees = [...event.attendees, formData]; // Append new attendee data to the existing array
+
+        await dbClient.db.collection('events').updateOne(
+            { _id: ObjectId.createFromHexString(id) },
+            { $set: { attendees: updatedAttendees } }
+        );
+
+        return res.status(200).json({
+            message: 'Attendee added successfully',
+            attendees: updatedAttendees
+        });
     }
 }
 
