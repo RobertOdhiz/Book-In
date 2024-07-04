@@ -18,7 +18,6 @@ export async function signOut(supabase) {
 }
 
 export async function createCalendarEvent(session, eventTitle, eventDescription, eventDateTime, eventDuration) {
-
     const event = {
         summary: eventTitle,
         description: eventDescription,
@@ -31,22 +30,27 @@ export async function createCalendarEvent(session, eventTitle, eventDescription,
             timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         },
     };
+
     let eventData = {};
-    await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
-        method: 'POST',
-        headers: {
-            Authorization: `Bearer ${session.provider_token}`,
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(event),
-    })
-        .then(async (response) => {
-            eventData = await response.json();
-        })
-        .catch((error) => {
-            console.error('Error creating calendar event:', error);
-            return null;
+    try {
+        const response = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${session.provider_token}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(event),
         });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        eventData = await response.json();
+    } catch (error) {
+        console.error('Error creating calendar event:', error);
+        return null;
+    }
 
     return eventData;
 }
@@ -100,9 +104,25 @@ export async function getCalendarEvent(session, eventId) {
 
     return event;
 }
+
 const getEventEndTime = (dateTime, duration) => {
+    if (!dateTime || !duration) {
+        throw new RangeError('Invalid dateTime or duration');
+    }
+
     const [hr, min] = duration.split(':').map(Number);
+    if (isNaN(hr) || isNaN(min)) {
+        throw new RangeError('Invalid duration format');
+    }
+
     const endTime = new Date(dateTime);
-    endTime.setHours(endTime.getHours() + hr, endTime.getMinutes() + min);
+    endTime.setHours(endTime.getHours() + hr);
+    endTime.setMinutes(endTime.getMinutes() + min);
+
+    if (isNaN(endTime.getTime())) {
+        throw new RangeError('Invalid endTime calculation');
+    }
+
     return endTime.toISOString();
 };
+
