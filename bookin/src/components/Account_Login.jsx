@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react';
 import { googleSignIn, signOut } from '../services/googleServices';
 import {
@@ -12,6 +12,7 @@ import {
     MDBCheckbox,
     MDBTypography
 } from 'mdb-react-ui-kit';
+import axios from 'axios';
 
 function AccountLogin() {
     const session = useSession();
@@ -35,6 +36,20 @@ function AccountLogin() {
         });
     };
 
+    //const [user, setUser] = useState({});
+
+
+
+    const fetchUser = async () => {
+        let { user_metadata: { sub: googleId } } = session.user;
+
+        const response = await axios.get(`http://localhost:5000/users/${googleId}`);
+        //setUser(response.data.user);
+        return response.status === 200;
+    };
+
+
+
     return (
         <MDBContainer fluid className='p-4 background-radial-gradient overflow-hidden'>
             <MDBRow className='justify-content-center align-items-center' style={{ minHeight: '100vh' }}>
@@ -54,9 +69,20 @@ function AccountLogin() {
                         {session ? (
                             <>
                                 <MDBTypography tag="h2" className='fw-bold mb-4 text-center'>Welcome Back!</MDBTypography>
-                                <MDBBtn color='success' className='w-100 mb-4' size='md' href='/register/events' block>
-                                    Proceed To Events
-                                </MDBBtn>
+                                {fetchUser() ?
+                                    <>
+                                        <MDBBtn color='success' className='w-100 mb-4' size='md' href='/register-event' block>
+                                            Proceed To Events
+                                        </MDBBtn>
+                                    </>
+                                    :
+                                    <>
+                                        <MDBBtn color='success' className='w-100 mb-4' size='md' href='/register/thank-you' block>
+                                            Proceed To Events
+                                        </MDBBtn>
+                                    </>
+                                }
+
                                 <MDBBtn color='bg-secondary shadow-1-strong' className='w-100 mb-4' size='md' onClick={handleSignOut} block>
                                     Sign Out
                                 </MDBBtn>
