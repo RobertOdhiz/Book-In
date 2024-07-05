@@ -14,24 +14,29 @@ import { MDBBtn } from 'mdb-react-ui-kit';
 function Landing() {
 
   const session = useSession();
-
+  let UserDashboardUrl = '/login';
+  if (session) {
+    UserDashboardUrl = `/users/${session.user.user_metadata.sub}/dashboard`;
+  }
 
   return (
     <div className='landing'>
       <nav className='nav'>
         <h4>Book-In</h4>
         <ul>
-          <li>Products</li>
-          <li>About</li>
-          <li ><NavLink className='text-link' href='/events'>Events</NavLink></li>
-
+          <li ><NavLink className='text-link' href='/'>Home</NavLink></li>
           {session ?
             <>
-              <li ><NavLink className='text-link' href='/login'>Login</NavLink></li>
+              <li ><NavLink className='text-link' href={UserDashboardUrl}>Dashboard</NavLink></li>
+              <MDBBtn color='success'>
+                <NavLink className='text-link' href='/login'>Logout</NavLink>
+              </MDBBtn>
             </>
             :
             <>
-              <li ><NavLink className='text-link' href='/login'>Get Started</NavLink></li>
+              <MDBBtn color='success'>
+                <NavLink className='text-link' href='/login'>Login</NavLink>
+              </MDBBtn>
             </>
           }
         </ul>
