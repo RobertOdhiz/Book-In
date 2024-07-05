@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react';
 import { getCalendarEvent } from '../services/googleServices';
 import { useLocation } from 'react-router-dom';
-import QRCode from 'react-qr-code';
+import QRCode from 'qrcode'; // use "qrcode" package instead of "react-qr-code"
 import '../styles/Account_Registration.css';
 import {
     MDBBtn,
@@ -31,11 +31,9 @@ function EventQRCode() {
     useEffect(() => {
         if (session) {
             const fetchEvent = async () => {
-                //const eventData = await getCalendarEvent(session, id);
                 const response = await axios.get(`http://localhost:5000/events/${id}`);
                 setFullEventData(response.data.event);
-                //const response = await axios.get(`http://localhost:5000/events/${eventId}`);
-                let event = response.data.event; //await getCalendarEvent(session, eventId);
+                const event = response.data.event;
 
                 setEventData({
                     id: event.eventId,
@@ -68,16 +66,17 @@ function EventQRCode() {
             try {
                 setFullEventData({ ...fullEventData, qrCodeDataURL: qrCodeDataURL });
                 console.log(fullEventData);
-                axios.post(`http://localhost:5000/events/${id}`, fullEventData)
+                const dbId = fullEventData._id;
+                console.log(dbId);
+                axios.put(`http://localhost:5000/events/${dbId}`, fullEventData)
                     .then((response) => {
-                        if (response.status === 201) {
-                            alert('Event created');
-
+                        if (response.status === 200 || response.status === 204) {
                             alert('QR Code saved successfully!');
                         } else {
                             alert('Failed to save QR Code');
                         }
-                    });
+                    })
+
             } catch (error) {
                 console.error('Failed to save QR Code', error);
             }
@@ -107,27 +106,24 @@ function EventQRCode() {
                             {session ? (
                                 <>
                                     {eventData ? (
-                                        <MDBRow key={eventData.id} className='mb-4 shadow-5-strong'>
-                                            <MDBCol md='2' className='m-2 d-flex justify-content-center align-items-center shadow-1-strong' style={{ background: 'lightblue' }}>
-                                                <QRCode
-                                                    size={256}
-                                                    style={{ height: "auto", maxWidth: "100%", width: "100%" }}
-                                                    value={currentUrl}
-                                                    viewBox={`0 0 256 256`}
-                                                />
-                                            </MDBCol>
-                                            <MDBCol className='m-2'>
-                                                <MDBTypography color='secondary' className='fw-bold' style={{ color: 'GrayText' }}>Ticket Type</MDBTypography>
-                                                <p className='lead'>{eventData.title}</p>
-                                                <MDBTypography color='secondary' className='fw-bold' style={{ color: 'GrayText' }}>Event</MDBTypography>
-                                                <p className='lead'>{eventData.description}</p>
-                                                <p className='lead'>Expected guests in attendance: {eventData.guests}</p>
-                                                <p>Event will be held at {eventData.location} from {formatDateTime(eventData.startTime, eventData.endTime)}</p>
-                                                <MDBTypography color='secondary' className='fw-bold' style={{ color: 'GrayText' }}>Status</MDBTypography>
-                                                <p className='lead'>{eventData.status}</p>
-                                                <MDBBtn className='w-100 mb-4' size='md' onClick={saveQRCode}>Save QR Code</MDBBtn>
-                                            </MDBCol>
-                                        </MDBRow>
+                                        <>
+                                            <MDBRow key={eventData.id} className='mb-4 shadow-5-strong'>
+                                                <MDBCol md='2' className='m-2 d-flex justify-content-center align-items-center shadow-1-strong'>
+                                                    <img src={qrCodeDataURL} alt='QR Code' />
+                                                </MDBCol>
+                                                <MDBCol className='m-2'>
+                                                    <MDBTypography color='secondary' className='fw-bold' style={{ color: 'GrayText' }}>Ticket Type</MDBTypography>
+                                                    <p className='lead'>{eventData.title}</p>
+                                                    <MDBTypography color='secondary' className='fw-bold' style={{ color: 'GrayText' }}>Event</MDBTypography>
+                                                    <p className='lead'>{eventData.description}</p>
+                                                    <p className='lead'>Expected guests in attendance: {eventData.guests}</p>
+                                                    <p>Event will be held at {eventData.location} from {formatDateTime(eventData.startTime, eventData.endTime)}</p>
+                                                    <MDBTypography color='secondary' className='fw-bold' style={{ color: 'GrayText' }}>Status</MDBTypography>
+                                                    <p className='lead'>{eventData.status}</p>
+                                                </MDBCol>
+                                                <MDBBtn color='success' className='me-2 mb-4' size='md' onClick={saveQRCode}>Save QR Code</MDBBtn>
+                                            </MDBRow>
+                                        </>
                                     ) : (
                                         <MDBTypography color='secondary' className='fw-bold' style={{ color: 'GrayText' }}>No Event Found</MDBTypography>
                                     )}
@@ -151,3 +147,4 @@ function EventQRCode() {
 }
 
 export default EventQRCode;
+
