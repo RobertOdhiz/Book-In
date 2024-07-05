@@ -55,11 +55,16 @@ class EventsController {
     }
 
     static async updateEventById(req, res) {
-        let { eventId } = req.params;
+        let { id } = req.params;
+        console.log(id);
+        if (!req.body) {
+            return res.status(400).json({ error: 'Invalid input' });
+        }
+
         const {
             email,
             attendees,
-            _id,
+            eventId,
             title,
             userId,
             startTime,
@@ -71,16 +76,16 @@ class EventsController {
             qrCodeDataURL
         } = req.body;
 
-        if (!req.body) {
-            return res.status(400).json({ error: 'Invalid input' });
-        }
-
         if (!dbClient.isAlive()) {
             return res.status(500).json({ error: 'Database server not connected' });
         }
 
-        const event = await dbClient.db.collection('events').findOne({ _id: ObjectId.createFromHexString(_id) });
+        if (!ObjectId.isValid(id)) {
+            return res.status(400).json({ error: 'Invalid Event ID' });
+        }
 
+        const event = await dbClient.db.collection('events').findOne({ _id: new ObjectId(id) });
+        console.log(event);
         if (!event) {
             return res.status(404).json({ error: 'Event not found' });
         }
@@ -103,7 +108,7 @@ class EventsController {
         };
 
         await dbClient.db.collection('events').updateOne(
-            { _id: ObjectId.createFromHexString(id) },
+            { _id: new ObjectId(id) },
             { $set: updateData }
         );
 
@@ -112,7 +117,6 @@ class EventsController {
             id
         });
     }
-
 
     static async deleteEventById(req, res) {
         const { id } = req.params;
