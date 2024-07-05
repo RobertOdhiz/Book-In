@@ -129,13 +129,14 @@ function EventRegistration() {
                                     <MDBRow>
                                         <MDBCol col='6'>
                                             <label htmlFor='date-picker'>Date</label>
+                                            <br />
                                             <DateTimePicker onChange={setEventDateTime} value={eventDateTime} />
                                         </MDBCol>
 
                                         <MDBCol>
                                             <label htmlFor='duration-picker'>Duration</label>
                                             <br />
-                                            <MDBInput style={{ height: '30px' }} wrapperClass='mb-4' label='' id='form2' type='time' onChange={(e) => { setEventDuration(e.target.value) }} />
+                                            <MDBInput className='w-auto' style={{ height: '30px' }} wrapperClass='mb-4' label='' id='form2' type='time' onChange={(e) => { setEventDuration(e.target.value) }} />
                                         </MDBCol>
                                     </MDBRow>
                                     <div className='d-flex justify-content-center mb-4 mt-2'>
