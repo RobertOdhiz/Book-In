@@ -14,7 +14,7 @@ router.delete('/users/clear/:userId', UsersController.deleteUsersByUserId);
 /* Event CRUD */
 router.get('/events', EventsController.getEvents);
 router.get('/events/:id', EventsController.getEventById);
-router.get('/user/events/:userId', EventsController.getEventsByUserId);
+router.get('/users/:userId/dashboard', EventsController.getEventsByUserId);
 router.post('/events', EventsController.postCreateEvent);
 router.put('/events/:id', EventsController.updateEventById);
 router.put('/events/:id/attendees', EventsController.appendAttendee);

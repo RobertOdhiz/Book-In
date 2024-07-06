@@ -138,7 +138,7 @@ class EventsController {
 
     static async getEventsByUserId(req, res) {
         const { userId } = req.params;
-
+        console.log('getEventbyid called');
         if (!userId) {
             return res.status(400).json({ error: 'User ID is required' });
         }
