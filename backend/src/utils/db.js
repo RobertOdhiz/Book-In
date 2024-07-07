@@ -3,9 +3,11 @@ const { MongoClient } = require('mongodb');
 
 class DBClient {
     constructor() {
-        const { DB_HOST, DB_PORT, DB_DATABASE } = process.env;
-        const url = `mongodb://${DB_HOST}:${DB_PORT}`;
-
+        const { DB_HOST, DB_PORT, DB_DATABASE, DB_ATLAS } = process.env;
+        console.log(DB_HOST);
+        //const url = `mongodb://${DB_HOST}:${DB_PORT}`;
+        const uri = DB_ATLAS;
+        const url = uri;
         this.client = new MongoClient(url);
 
         this.client.connect()
