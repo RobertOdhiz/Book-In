@@ -36,7 +36,6 @@ function EventRegistration() {
     const supabase = useSupabaseClient();
     const { isLoading } = useSessionContext(); // prevents a blank screen on load
     console.log(session ? `Session in Event Registration ${session.user.email}` : 'No session');
-
     if (isLoading) { return <></> };
 
     const [hr, min] = eventDuration.split(':');
@@ -46,7 +45,6 @@ function EventRegistration() {
         event.preventDefault();
         try {
             const data = await createCalendarEvent(session, eventTitle, eventDescription, eventDateTime, eventDuration);
-
             if (data) {
                 alert(`Event created successfully with id: ${data.id}`);
 
