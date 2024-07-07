@@ -56,7 +56,6 @@ class EventsController {
 
     static async updateEventById(req, res) {
         let { id } = req.params;
-        console.log(id);
         if (!req.body) {
             return res.status(400).json({ error: 'Invalid input' });
         }
@@ -85,7 +84,6 @@ class EventsController {
         }
 
         const event = await dbClient.db.collection('events').findOne({ _id: new ObjectId(id) });
-        console.log(event);
         if (!event) {
             return res.status(404).json({ error: 'Event not found' });
         }
@@ -138,7 +136,6 @@ class EventsController {
 
     static async getEventsByUserId(req, res) {
         const { userId } = req.params;
-        console.log('getEventbyid called');
         if (!userId) {
             return res.status(400).json({ error: 'User ID is required' });
         }
