@@ -15,13 +15,19 @@ import {
     MDBTable,
     MDBTableHead,
     MDBTableBody,
-    MDBBadge
+    MDBBadge,
+    MDBDropdown,
+    MDBDropdownToggle,
+    MDBDropdownMenu,
+    MDBDropdownItem
 } from 'mdb-react-ui-kit';
+import { useNavigate } from 'react-router-dom';
 
 function UserDashboard() {
     const session = useSession();
     const supabase = useSupabaseClient();
     const [events, setEvents] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (session) {
@@ -61,16 +67,36 @@ function UserDashboard() {
                 </td>
                 <td>
                     <p className='fw-normal mb-1'>{new Date(event.startTime).toLocaleDateString()}</p>
+                    <p className='fw-normal mb-1'>{new Date(event.startTime).toLocaleTimeString()}</p>
                 </td>
                 <td>
                     <p className='fw-normal mb-1'>{new Date(event.endTime).toLocaleDateString()}</p>
+                    <p className='fw-normal mb-1'>{new Date(event.endTime).toLocaleTimeString()}</p>
                 </td>
                 <td>
                     <MDBBadge color='success' pill>
                         {event.status}
                     </MDBBadge>
                 </td>
-                <td>Senior</td>
+                <td>
+                    <MDBDropdown>
+                        <MDBDropdownToggle className='bg-success text-white rounded-5'>Attendees</MDBDropdownToggle>
+                        <MDBDropdownMenu>
+                            {event.attendees.length > 0 ?
+                                event.attendees.map((item, key) => (
+                                <MDBDropdownItem>
+                                    {
+                                    item.email
+                                    }
+                                </MDBDropdownItem>
+                                )) : 
+                                <MDBDropdownItem className='align-content-center mx-2'>
+                                    <h6 className='align-content-center'>None</h6>
+                                </MDBDropdownItem>
+                            }
+                        </MDBDropdownMenu>
+                    </MDBDropdown>
+                </td>
             </tr>
         ))
     );
@@ -108,7 +134,11 @@ function UserDashboard() {
                     </tr>
                 </MDBTableHead>
                 <MDBTableBody>
-                    {events.length > 0 ? renderEvents() : <p>No events</p>}
+                    {events.length > 0 ? renderEvents() : 
+                    <div className='d-flex align-items-center justify-content-center flex-column p-4 w-100 gap-1'>
+                        <p className=''>No Events</p>
+                        <MDBBtn className='bg-success text-white' onClick={() => navigate('/register-event')}>Create Event Now</MDBBtn>
+                    </div>}
                 </MDBTableBody>
             </MDBTable>
         </MDBContainer>
