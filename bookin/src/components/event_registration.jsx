@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSession, useSupabaseClient, useSessionContext } from '@supabase/auth-helpers-react';
 import axios from 'axios';
 import '../styles/Account_Registration.css';
+import '../styles/event_registration.css';
+import Person from '../assets/img_avatar.png';
 import {
     MDBBtn,
     MDBContainer,
@@ -12,9 +14,9 @@ import {
     MDBInput,
     MDBCheckbox,
     MDBIcon,
-    MDBCardTitle
+    MDBCardTitle,
+    MDBInputGroup
 } from 'mdb-react-ui-kit';
-
 import { googleSignIn, signOut, createCalendarEvent } from '../services/googleServices';
 
 import DateTimePicker from 'react-datetime-picker';
@@ -23,6 +25,7 @@ import 'react-calendar/dist/Calendar.css';
 import 'react-clock/dist/Clock.css';
 import '../styles/Account_login.css';
 
+
 function EventRegistration() {
     const [eventDateTime, setEventDateTime] = useState(new Date());
     const [eventDuration, setEventDuration] = useState('');
@@ -30,16 +33,39 @@ function EventRegistration() {
     const [eventLocation, setEventLocation] = useState('');
     const [eventGuests, setEventGuests] = useState([]);
     const [eventDescription, setEventDescription] = useState('');
+    const [userExists, setUserExists] = useState(false);
+    const [selectEmail, setSelectEmail] = useState('');
 
-    const session = useSession(); // current active token stored here, when session exists we have a user
+    const session = useSession();
     const supabase = useSupabaseClient();
-    const { isLoading } = useSessionContext(); // prevents a blank screen on load
-    console.log(session ? `Session in Event Registration ${session.user.email}` : 'No session');
-    if (isLoading) { return <></> };
+    const { isLoading } = useSessionContext();
 
-    const [hr, min] = eventDuration.split(':');
-    const eventLabel = `This event will take place on ${eventDateTime.toDateString()} at ${eventDateTime.toLocaleTimeString()} for duration ${hr}h ${min}m`;
+    const fetchUser = async () => {
+        if (session) {
+            let { user_metadata: { sub: googleId } } = session.user;
+            try {
+                await axios.get(`http://localhost:5000/users/${googleId}`);
+                setUserExists(true);
+            } catch (error) {
+                console.error('Error fetching user:', error.response.data);
+                if (error.response.status === 404) {
+                    setUserExists(false);
+                }
+            }
+        }
+    };
 
+    useEffect(() => {
+        fetchUser();
+    }, [session]);
+
+    if (isLoading) {
+        return null;
+    }
+
+    const addEmailToGuests = (email) => {
+        setEventGuests([...eventGuests, email]);
+    };
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
@@ -92,6 +118,20 @@ function EventRegistration() {
         }
     };
 
+    const renderGuests = () => (
+        <>
+            {selectEmail && (
+                <div className='chip d-flex justify-content-between align-items-center mb-2 shadow-5-strong'>
+                    <img src={session.user.user_metadata.picture} alt='' />
+                    <span>{selectEmail}</span>
+                    <MDBIcon icon='close' onClick={() => { setEventGuests(prevGuests => [...prevGuests, selectEmail]) }} />
+                </div>
+            )}
+        </>
+    )
+    const [hr, min] = eventDuration.split(':');
+    const eventLabel = `This event will take place on ${eventDateTime.toDateString()} at ${eventDateTime.toLocaleTimeString()} for duration ${hr}h ${min}m`;
+
     return (
         <MDBContainer fluid className='p-4 background-radial-gradient overflow-hidden'>
             <MDBRow className='justify-content-center'>
@@ -116,7 +156,7 @@ function EventRegistration() {
 
                     <MDBCard className='my-5 bg-glass'>
                         <MDBCardBody className='p-5'>
-                            {session ?
+                            {session && userExists ?
                                 <>
                                     <h4>Welcome {session.user.email}!</h4>
 
@@ -130,17 +170,19 @@ function EventRegistration() {
                                             <DateTimePicker onChange={setEventDateTime} value={eventDateTime} />
                                         </MDBCol>
 
-                                        <MDBCol>
+                                        <MDBCol md='2'>
                                             <label htmlFor='duration-picker'>Duration</label>
                                             <br />
-                                            <MDBInput className='w-auto' style={{ height: '30px' }} wrapperClass='mb-4' label='' id='form2' type='time' onChange={(e) => { setEventDuration(e.target.value) }} />
+                                            <MDBInput className='w-auto ' style={{ height: '30px' }} wrapperClass='mb-4' label='' id='form2' type='time' onChange={(e) => { setEventDuration(e.target.value) }} />
                                         </MDBCol>
                                     </MDBRow>
                                     <div className='d-flex justify-content-center mb-4 mt-2'>
                                         <MDBCheckbox name='flexCheck' value='' id='flexCheckDefault' label={eventLabel} />
                                     </div>
                                     <MDBInput wrapperClass='mb-4' label='Event Location' id='form2' type='text' onChange={(e) => { setEventLocation(e.target.value) }} />
-                                    <MDBInput wrapperClass='mb-4' label='Add Guest Email' id='form3' type='text' onChange={(e) => { setEventGuests((prevGuests) => [...prevGuests, e.target.value]) }} />
+                                    <MDBInput className='mb-4' label='Add Guest Email' id='form3' type='text' onChange={(e) => { setEventGuests((prevGuests) => [...prevGuests, e.target.value]) }}>
+                                        <i className='fas fa-plus trailing rounded' floating style={{ cursor: 'pointer' }}></i>
+                                    </MDBInput>
                                     <MDBBtn className='w-100 mb-4' size='md'
                                         onClick={handleSubmit}
                                     > Create</MDBBtn>
@@ -159,8 +201,9 @@ function EventRegistration() {
                 </MDBCol>
 
             </MDBRow>
-        </MDBContainer>
+        </MDBContainer >
     );
 }
 
 export default EventRegistration;
+

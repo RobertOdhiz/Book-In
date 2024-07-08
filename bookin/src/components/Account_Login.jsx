@@ -17,6 +17,7 @@ import axios from 'axios';
 function AccountLogin() {
     const session = useSession();
     const supabase = useSupabaseClient();
+    const [userExists, setUserExists] = useState(false);
     console.log(session ? `Session in Account Login : ${session.user.email}` : 'No session');
 
     const handleSignIn = async () => {
@@ -25,7 +26,7 @@ function AccountLogin() {
         console.log(session, user);
         await googleSignIn(supabase).then(() => {
             alert('Signed in');
-            //window.location.href = '/register/thank-you';
+            window.location.href = '/register/thank-you';
         });
     };
 
@@ -36,17 +37,23 @@ function AccountLogin() {
         });
     };
 
-    //const [user, setUser] = useState({});
-
-
 
     const fetchUser = async () => {
         let { user_metadata: { sub: googleId } } = session.user;
-
-        const response = await axios.get(`http://localhost:5000/users/${googleId}`);
-        //setUser(response.data.user);
-        return response.status === 200;
+        try {
+            const response = await axios.get(`http://localhost:5000/users/${googleId}`);
+            setUserExists(true);
+        } catch (error) {
+            console.error('Error fetching user:', error.response.data);
+            if (error.response.status === 404) {
+                setUserExists(false);
+            }
+        }
     };
+
+    useEffect(() => {
+        fetchUser();
+    }, [session]);
 
 
 
@@ -69,7 +76,7 @@ function AccountLogin() {
                         {session ? (
                             <>
                                 <MDBTypography tag="h2" className='fw-bold mb-4 text-center'>Welcome Back!</MDBTypography>
-                                {fetchUser() ?
+                                {userExists ?
                                     <>
                                         <MDBBtn color='success' className='w-100 mb-4' size='md' href='/register-event' block>
                                             Proceed To Events
@@ -78,7 +85,7 @@ function AccountLogin() {
                                     :
                                     <>
                                         <MDBBtn color='success' className='w-100 mb-4' size='md' href='/register/thank-you' block>
-                                            Proceed To Events
+                                            Proceed To Registration
                                         </MDBBtn>
                                     </>
                                 }

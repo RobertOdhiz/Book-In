@@ -51,6 +51,7 @@ function UserDashboard() {
 
     const renderEvents = () => (
         events.map((event) => (
+            console.log(event),
             <tr key={event._id}>
                 <td>
                     <div className='d-flex align-items-center'>
@@ -82,14 +83,14 @@ function UserDashboard() {
                     <MDBDropdown>
                         <MDBDropdownToggle className='bg-success text-white rounded-5'>Attendees</MDBDropdownToggle>
                         <MDBDropdownMenu>
-                            {event.attendees.length > 0 ?
+                            {Array.isArray(event.attendees) && event.attendees.length > 0 ?
                                 event.attendees.map((item, key) => (
-                                <MDBDropdownItem>
-                                    {
-                                    item.email
-                                    }
-                                </MDBDropdownItem>
-                                )) : 
+                                    <MDBDropdownItem>
+                                        {
+                                            item.email
+                                        }
+                                    </MDBDropdownItem>
+                                )) :
                                 <MDBDropdownItem className='align-content-center mx-2'>
                                     <h6 className='align-content-center'>None</h6>
                                 </MDBDropdownItem>
@@ -134,11 +135,11 @@ function UserDashboard() {
                     </tr>
                 </MDBTableHead>
                 <MDBTableBody>
-                    {events.length > 0 ? renderEvents() : 
-                    <div className='d-flex align-items-center justify-content-center flex-column p-4 w-100 gap-1'>
-                        <p className=''>No Events</p>
-                        <MDBBtn className='bg-success text-white' onClick={() => navigate('/register-event')}>Create Event Now</MDBBtn>
-                    </div>}
+                    {events.length > 0 ? renderEvents() :
+                        <div className='d-flex align-items-center justify-content-center flex-column p-4 w-100 gap-1'>
+                            <p className=''>No Events</p>
+                            <MDBBtn className='bg-success text-white' onClick={() => navigate('/register-event')}>Create Event Now</MDBBtn>
+                        </div>}
                 </MDBTableBody>
             </MDBTable>
         </MDBContainer>
