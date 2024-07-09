@@ -31,7 +31,7 @@ function EventQRCode() {
     useEffect(() => {
         if (session) {
             const fetchEvent = async () => {
-                const response = await axios.get(`http://localhost:5000/events/${id}`);
+                const response = await axios.get(`https://alxrob.tech/events/${id}`);
                 setFullEventData(response.data.event);
                 const event = response.data.event;
 
@@ -68,7 +68,7 @@ function EventQRCode() {
                 console.log(fullEventData);
                 const dbId = fullEventData._id;
                 console.log(dbId);
-                axios.put(`http://localhost:5000/events/${dbId}`, fullEventData)
+                axios.put(`https://alxrob.tech/events/${dbId}`, fullEventData)
                     .then((response) => {
                         if (response.status === 200 || response.status === 204) {
                             alert('QR Code saved successfully!');

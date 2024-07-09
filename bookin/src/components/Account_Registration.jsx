@@ -37,7 +37,7 @@ function Registration() {
 
                 if (session) {
                     const googleId = session.user.user_metadata.sub;
-                    const response = await axios.post('http://localhost:5000/register', {
+                    const response = await axios.post('https://alxrob.tech/register', {
                         email: values.email,
                         userName: `${values.firstName} ${values.lastName}`,
                         userId: googleId

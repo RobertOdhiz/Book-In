@@ -41,7 +41,7 @@ function AccountLogin() {
     const fetchUser = async () => {
         let { user_metadata: { sub: googleId } } = session.user;
         try {
-            const response = await axios.get(`http://localhost:5000/users/${googleId}`);
+            const response = await axios.get(`https://alxrob.tech/users/${googleId}`);
             setUserExists(true);
         } catch (error) {
             console.error('Error fetching user:', error.response.data);

@@ -17,7 +17,7 @@ function EventsList() {
     const supabase = useSupabaseClient();
     const [events, setEvents] = useState([]);
     const navigate = useNavigate();
-
+    
     useEffect(() => {
         if (session) {
             const fetchEvents = async () => {

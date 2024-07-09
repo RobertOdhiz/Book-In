@@ -45,7 +45,7 @@ function ThankYouPage() {
                 userId: userId || '',
                 organization: organization,
             };
-            axios.get(`http://127.0.0.1:5000/users/${userId}`)
+            axios.get(`https://alxrob.tech/users/${userId}`)
                 .then((response) => {
                     if (response.status === 200) {
                         alert('User already exists');
@@ -53,7 +53,7 @@ function ThankYouPage() {
                     }
                 })
                 .catch((error) => {
-                    if (error.response.status === 404) {
+                    if (error.response === 404) {
                         return handlePost();
                     } else {
                         console.error('Registration error:', error.message);
@@ -61,7 +61,7 @@ function ThankYouPage() {
                     }
                 });
             const handlePost = async () => {
-                axios.post('http://127.0.0.1:5000/register', userData)
+                axios.post('https://alxrob.tech/register', userData)
                     .then((response2) => {
                         if (response2.status === 201) {
                             alert('User created');

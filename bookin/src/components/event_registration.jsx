@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSession, useSupabaseClient, useSessionContext } from '@supabase/auth-helpers-react';
 import axios from 'axios';
 import '../styles/Account_Registration.css';
-import '../styles/event_registration.css';
-import Person from '../assets/img_avatar.png';
+// import Person from '../assets/img_avatar.png';
 import {
     MDBBtn,
     MDBContainer,
@@ -22,8 +21,6 @@ import { googleSignIn, signOut, createCalendarEvent } from '../services/googleSe
 import DateTimePicker from 'react-datetime-picker';
 import 'react-datetime-picker/dist/DateTimePicker.css';
 import 'react-calendar/dist/Calendar.css';
-import 'react-clock/dist/Clock.css';
-import '../styles/Account_login.css';
 
 
 function EventRegistration() {
@@ -44,7 +41,7 @@ function EventRegistration() {
         if (session) {
             let { user_metadata: { sub: googleId } } = session.user;
             try {
-                await axios.get(`http://localhost:5000/users/${googleId}`);
+                await axios.get(`https://alxrob.tech/users/${googleId}`);
                 setUserExists(true);
             } catch (error) {
                 console.error('Error fetching user:', error.response.data);
@@ -63,9 +60,14 @@ function EventRegistration() {
         return null;
     }
 
-    const addEmailToGuests = (email) => {
-        setEventGuests([...eventGuests, email]);
+    const addEmailToGuests = () => {
+        if (selectEmail) {
+            const name = selectEmail.split('@')[0];
+            setEventGuests([...eventGuests, { name, email: selectEmail }]);
+            setSelectEmail('');
+        }
     };
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
@@ -120,15 +122,16 @@ function EventRegistration() {
 
     const renderGuests = () => (
         <>
-            {selectEmail && (
-                <div className='chip d-flex justify-content-between align-items-center mb-2 shadow-5-strong'>
-                    <img src={session.user.user_metadata.picture} alt='' />
-                    <span>{selectEmail}</span>
-                    <MDBIcon icon='close' onClick={() => { setEventGuests(prevGuests => [...prevGuests, selectEmail]) }} />
+            {eventGuests.map((guest, index) => (
+                <div key={index} className='chip d-flex justify-content-between align-items-center mb-2 shadow-5-strong'>
+                    <img src={Person} alt='' />
+                    <span>{guest.email}</span>
+                    <MDBIcon icon='close' onClick={() => setEventGuests(eventGuests.filter((_, i) => i !== index))} />
                 </div>
-            )}
+            ))}
         </>
-    )
+    );
+
     const [hr, min] = eventDuration.split(':');
     const eventLabel = `This event will take place on ${eventDateTime.toDateString()} at ${eventDateTime.toLocaleTimeString()} for duration ${hr}h ${min}m`;
 
@@ -180,12 +183,10 @@ function EventRegistration() {
                                         <MDBCheckbox name='flexCheck' value='' id='flexCheckDefault' label={eventLabel} />
                                     </div>
                                     <MDBInput wrapperClass='mb-4' label='Event Location' id='form2' type='text' onChange={(e) => { setEventLocation(e.target.value) }} />
-                                    <MDBInput className='mb-4' label='Add Guest Email' id='form3' type='text' onChange={(e) => { setEventGuests((prevGuests) => [...prevGuests, e.target.value]) }}>
-                                        <i className='fas fa-plus trailing rounded' floating style={{ cursor: 'pointer' }}></i>
-                                    </MDBInput>
-                                    <MDBBtn className='w-100 mb-4' size='md'
-                                        onClick={handleSubmit}
-                                    > Create</MDBBtn>
+                                    <MDBInput wrapperClass='mb-4' label='Add Guest Email' id='form3' type='text' value={selectEmail} onChange={(e) => setSelectEmail(e.target.value)} />
+                                    <MDBBtn className='mb-4' size='md' onClick={addEmailToGuests}>Add Guest</MDBBtn>
+                                    {renderGuests()}
+                                    <MDBBtn className='w-100 mb-4' size='md' onClick={handleSubmit}>Create</MDBBtn>
                                 </>
                                 :
                                 <>
@@ -206,4 +207,3 @@ function EventRegistration() {
 }
 
 export default EventRegistration;
-
