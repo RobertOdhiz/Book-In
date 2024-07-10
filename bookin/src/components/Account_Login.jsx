@@ -47,7 +47,12 @@ function AccountLogin() {
             console.error('Error fetching user:', error.response.data);
             if (error.response.status === 404) {
                 setUserExists(false);
-                
+                try {
+                  await googleSignIn(supabase);
+                  setUserExists(true);
+                } catch (err) {
+                    console.error('Error creating new User: ', err);
+                }
             }
         }
     };
