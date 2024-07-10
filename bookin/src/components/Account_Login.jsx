@@ -39,7 +39,7 @@ function AccountLogin() {
 
 
     const fetchUser = async () => {
-        let { user_metadata: { sub: googleId } } = session.user;
+        let { user_metadata: { sub: googleId } } = session?.user;
         try {
             const response = await axios.get(`https://alxrob.tech/users/${googleId}`);
             setUserExists(true);
@@ -47,6 +47,7 @@ function AccountLogin() {
             console.error('Error fetching user:', error.response.data);
             if (error.response.status === 404) {
                 setUserExists(false);
+                
             }
         }
     };
