@@ -37,7 +37,7 @@ function Registration() {
 
                 if (session) {
                     const googleId = session.user.user_metadata.sub;
-                    const response = await axios.post('https://alxrob.tech/register', {
+                    const response = await axios.post('https://localhost:5000/register', {
                         email: values.email,
                         userName: `${values.firstName} ${values.lastName}`,
                         userId: googleId
@@ -89,7 +89,7 @@ function Registration() {
                                 <div className='text-center'>
                                     <p>or</p>
                                     <MDBBtn tag='a' color='green' className='my-2 w-100 border' style={{ backgroundColor: 'transparent', color: 'green', border: 'green' }} onClick={() => googleSignIn(supabase)}>
-                                        <MDBIcon fab icon='google' size='sm' className='me-2'/>
+                                        <MDBIcon fab icon='google' size='sm' className='me-2' />
                                         Sign Up with Google
                                     </MDBBtn>
                                 </div>

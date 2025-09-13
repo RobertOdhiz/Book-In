@@ -41,7 +41,7 @@ function EventRegistration() {
         if (session) {
             let { user_metadata: { sub: googleId } } = session.user;
             try {
-                await axios.get(`https://alxrob.tech/users/${googleId}`);
+                await axios.get(`https://localhost:5000/users/${googleId}`);
                 setUserExists(true);
             } catch (error) {
                 console.error('Error fetching user:', error.response.data);

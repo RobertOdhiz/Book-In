@@ -7,8 +7,8 @@ class DBClient {
         console.log(DB_HOST);
         //const url = `mongodb://${DB_HOST}:${DB_PORT}`;
         const uri = DB_ATLAS;
-        // const url = uri;
-        this.client = new MongoClient(uri);
+        const url = uri;
+        this.client = new MongoClient(url);
 
         this.client.connect()
             .then(() => {
@@ -22,11 +22,11 @@ class DBClient {
     }
 
     async dbUsers() {
-        return this.db.collection('users');
+        return this.db.collection('users').countDocuments();
     }
 
     async dbEvents() {
-        return this.db.collection('events');
+        return this.db.collection('events').countDocuments();
     }
 }
 

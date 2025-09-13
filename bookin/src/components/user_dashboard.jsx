@@ -35,7 +35,7 @@ function UserDashboard() {
                 try {
                     const { user_metadata } = session.user;
                     const userId = user_metadata.sub;
-                    const response = await axios.get(`https://alxrob.tech/users/${userId}/dashboard`);
+                    const response = await axios.get(`https://localhost:5000/users/${userId}/dashboard`);
                     setEvents(response.data.events);
                 } catch (error) {
                     console.error('Error fetching events:', error.response.data);

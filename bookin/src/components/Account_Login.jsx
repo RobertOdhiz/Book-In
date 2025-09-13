@@ -39,17 +39,18 @@ function AccountLogin() {
 
 
     const fetchUser = async () => {
-        let { user_metadata: { sub: googleId } } = session?.user;
+        let { user_metadata: { sub: googleId } } = session.user;
+        console.log(googleId);
         try {
-            const response = await axios.get(`https://alxrob.tech/users/${googleId}`);
+            const response = await axios.get(`https://localhost:5000/users/${googleId}`);
             setUserExists(true);
         } catch (error) {
             console.error('Error fetching user:', error.response.data);
             if (error.response.status === 404) {
                 setUserExists(false);
                 try {
-                  await googleSignIn(supabase);
-                  setUserExists(true);
+                    await googleSignIn(supabase);
+                    setUserExists(true);
                 } catch (err) {
                     console.error('Error creating new User: ', err);
                 }

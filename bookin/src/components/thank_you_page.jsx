@@ -45,7 +45,7 @@ function ThankYouPage() {
                 userId: userId || '',
                 organization: organization,
             };
-            axios.get(`https://alxrob.tech/users/${userId}`)
+            axios.get(`https://localhost:5000/users/${userId}`)
                 .then((response) => {
                     if (response.status === 200) {
                         alert('User already exists');
@@ -61,7 +61,7 @@ function ThankYouPage() {
                     }
                 });
             const handlePost = async () => {
-                axios.post('https://alxrob.tech/register', userData)
+                axios.post('https://localhost:5000/login', userData)
                     .then((response2) => {
                         if (response2.status === 201) {
                             alert('User created');

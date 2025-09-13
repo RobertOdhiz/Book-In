@@ -28,7 +28,7 @@ function Event() {
             const fetchEvent = async () => {
                 const eventId = location.pathname.split('/').pop();
                 console.log(eventId);
-                const response = await axios.get(`https://alxrob.tech/events/${eventId}`);
+                const response = await axios.get(`https://localhost:5000/events/${eventId}`);
                 let event = response.data.event; //await getCalendarEvent(session, eventId);
 
                 const eventObj = {
